@@ -1,0 +1,20 @@
+{
+  "name": "mavlink_js_library_v2_private",
+  "version": "1.0.0",
+  "description": "MAVLink v2 JS Library",
+  "main": "mavlink-lib.js",
+  "scripts": {
+    "prepare": "./mavlink-patch.sh",
+    "pretest": "./mavlink-patch.sh",
+    "test": "mocha test"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "jspack": "github:AndreasAntener/node-jspack#master",
+    "long": "^4.0.0",
+    "underscore": "^1.9.2",
+    "mocha": "",
+    "should": ""
+  }
+}
