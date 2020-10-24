@@ -11,4 +11,5 @@ cat mavlink.js \
  | sed 's/m\.payload/m._payload/g' \
  | sed "s/'<fHH16sB'/'<4BHH16sB'/g" \
  | sed "s/'<fBB16sB'/'<4BBB16sB'/g" \
+ | sed "s/jspack.Unpack(decoder.format, payload);/jspack.Unpack(decoder.format, payload, true);/g" \
  > mavlink.patched.js

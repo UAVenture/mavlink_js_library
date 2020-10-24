@@ -10449,10 +10449,10 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
     // Decode the payload and reorder the fields to match the order map.
     try {
         if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
-            var t = jspack.Unpack(decoder.format, payload);
+            var t = jspack.Unpack(decoder.format, payload, true);
         }
         else {
-            var t = jspack.Unpack(decoder.format, payload);
+            var t = jspack.Unpack(decoder.format, payload, true);
         }
     }
     catch (e) {

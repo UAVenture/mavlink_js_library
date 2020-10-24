@@ -29,6 +29,11 @@ describe('Test message handling:', function () {
     msg.name.should.eql("HEARTBEAT");
   });
 
+  // test send and check sequence number, sys and comp ID
+  // test array
+  // test message with "payload" field
+  // test message with "id" field
+
 });
 
 describe('Test param functions:', function () {
@@ -110,8 +115,3 @@ describe('Test param functions:', function () {
   });
 
 });
-
-// test send and check sequence number, sys and comp ID
-// test array
-// test message with "payload" field
-// test message with "id" field

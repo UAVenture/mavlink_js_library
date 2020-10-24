@@ -17,7 +17,7 @@ var sendData = function(buffer) {
 
 // Create the Mavlink wrapper object providing at least:
 // system ID, component ID, send data callback
-var mav = lib.MavlnkLib(255, 0, sendData);
+var mav = new lib.MavlnkLib(255, 0, sendData);
 
 // Forward data for parsing when it comes in:
 socket.on('data', function(data) {
