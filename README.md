@@ -8,19 +8,19 @@ This is a small MAVLink JS library wrapper that provides a more streamlined acce
 var lib = require('mavlink-lib.js');
 
 // Prepare your connection stream (serial, UDP, etc.):
-var socket = ...;
+var connection = ...;
 
 // Create callback function to send buffered data out:
 var sendData = function(buffer) {
-	socket.send(buffer, ...);
+	connection.send(buffer);
 }
 
 // Create the Mavlink wrapper object providing at least:
 // system ID, component ID, send data callback
-var mav = new lib.MavlnkLib(255, 0, sendData);
+var mav = new lib.MavlinkLib(255, 0, sendData);
 
 // Forward data for parsing when it comes in:
-socket.on('data', function(data) {
+connection.on('message', function(data) {
 	mav.parseData(data);
 })
 

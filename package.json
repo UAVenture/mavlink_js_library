@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "MAVLink v2 JS Library",
   "main": "mavlink-lib.js",
+  "private": true,
   "scripts": {
     "prepare": "./mavlink-patch.sh",
     "pretest": "./mavlink-patch.sh",
