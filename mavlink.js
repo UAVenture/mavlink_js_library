@@ -1268,7 +1268,9 @@ mavlink.MAV_CMD_SET_AB_ALTITUDE = 40100 // Set the current AB altitude to follow
 mavlink.MAV_CMD_SET_AB_POSITION = 40101 // Set the current AB position to use for line tracking. Select which
                         // point to set in param1. Use COMMAND_INT to
                         // transmit this command.
-mavlink.MAV_CMD_ENUM_END = 40102 // 
+mavlink.MAV_CMD_SET_AB_ENABLED = 40102 // Turn AB tracking on or off. The AB positions need to be set in order
+                        // to enable it.
+mavlink.MAV_CMD_ENUM_END = 40103 // 
 
 // MAV_DATA_STREAM
 mavlink.MAV_DATA_STREAM_ALL = 0 // Enable all data streams
@@ -1881,10 +1883,13 @@ mavlink.CELLULAR_NETWORK_STATUS_FLAG_ENUM_END = 2 //
 mavlink.PRECISION_LAND_MODE_DISABLED = 0 // Normal (non-precision) landing.
 mavlink.PRECISION_LAND_MODE_OPPORTUNISTIC = 1 // Use precision landing if beacon detected when land command accepted,
                         // otherwise land normally.
-mavlink.PRECISION_LAND_MODE_REQUIRED = 2 // Use precision landing, searching for beacon if not found when land
+mavlink.PRECISION_LAND_MODE_TARGET = 2 // Use precision landing, searching for beacon if not found when land
                         // command accepted (land normally if beacon
                         // cannot be found).
-mavlink.PRECISION_LAND_MODE_ENUM_END = 3 // 
+mavlink.PRECISION_LAND_MODE_RTK = 3 // Use precision landing. We need RTK for landing on the normal waypoint
+                        // coordinates.
+mavlink.PRECISION_LAND_MODE_LSF = 4 // Use precision landing. We need LSF.
+mavlink.PRECISION_LAND_MODE_ENUM_END = 5 // 
 
 // PARACHUTE_ACTION
 mavlink.PARACHUTE_DISABLE = 0 // Disable parachute release.
@@ -2201,7 +2206,7 @@ mavlink.TRIM_MODE = 3 // Put vehicle into trim mode where the main actuator     
 mavlink.PREFLIGHT_ACTUATOR_CHECK_REQUEST_ENUM_END = 4 // 
 
 // DATA_ITEM_TYPE
-mavlink.CAMERA_IMAGE_CAPTURED_V1 = 0 // 
+mavlink.CAMERA_IMAGE_CAPTURED_DATA = 0 // 
 mavlink.LOG_ENTRY = 1 // 
 mavlink.DATA_ITEM_TYPE_ENUM_END = 2 // 
 
@@ -2337,6 +2342,7 @@ mavlink.MAVLINK_MSG_ID_LANDING_TARGET_LSF_INT = 150
 mavlink.MAVLINK_MSG_ID_FENCE_STATUS = 162
 mavlink.MAVLINK_MSG_ID_TERRAIN_SENSOR = 180
 mavlink.MAVLINK_MSG_ID_DISTANCE_SENSOR_SYNCED = 181
+mavlink.MAVLINK_MSG_ID_CAMERA_IMAGE_CAPTURED_DATA = 219
 mavlink.MAVLINK_MSG_ID_MOTOR_ACTUATOR_DATA = 220
 mavlink.MAVLINK_MSG_ID_DATA_DATA = 221
 mavlink.MAVLINK_MSG_ID_DATA_FETCH = 222
@@ -6806,6 +6812,44 @@ mavlink.messages.distance_sensor_synced.prototype.pack = function(mav) {
 }
 
 /* 
+Information about a captured image
+
+                data_id                   : Data item ID (uint32_t)
+                time_boot_ms              : Timestamp (milliseconds since system boot) (uint32_t)
+                time_utc                  : Timestamp (microseconds since UNIX epoch) in UTC. 0 for unknown. (uint64_t)
+                camera_id                 : Camera ID (1 for first, 2 for second, etc.) (uint8_t)
+                sequence                  : Zero based index of this image (uint32_t)
+                lat                       : Latitude, expressed as degrees * 1E7 where image was taken (int32_t)
+                lon                       : Longitude, expressed as degrees * 1E7 where capture was taken (int32_t)
+                alt                       : Altitude in meters, expressed as * 1E3 (AMSL, not WGS84) where image was taken (int32_t)
+                relative_alt              : Altitude above ground in meters, expressed as * 1E3 where image was taken (int32_t)
+                q                         : Quaternion of camera orientation (w, x, y, z order, zero-rotation is 0, 0, 0, 0) (float)
+                capture_result            : Boolean indicating success (1) or failure (0) while capturing this image. (int8_t)
+                state                     : Bit field indicating additional information when this was captured; bit 0: armed. (uint8_t)
+
+*/
+mavlink.messages.camera_image_captured_data = function(data_id, time_boot_ms, time_utc, camera_id, sequence, lat, lon, alt, relative_alt, q, capture_result, state) {
+
+    this.format = '<QIIIiiii4fBbB';
+    this.id = mavlink.MAVLINK_MSG_ID_CAMERA_IMAGE_CAPTURED_DATA;
+    this.order_map = [1, 2, 0, 9, 3, 4, 5, 6, 7, 8, 10, 11];
+    this.crc_extra = 70;
+    this.name = 'CAMERA_IMAGE_CAPTURED_DATA';
+
+    this.fieldnames = ['data_id', 'time_boot_ms', 'time_utc', 'camera_id', 'sequence', 'lat', 'lon', 'alt', 'relative_alt', 'q', 'capture_result', 'state'];
+
+
+    this.set(arguments);
+
+}
+        
+mavlink.messages.camera_image_captured_data.prototype = new mavlink.message;
+
+mavlink.messages.camera_image_captured_data.prototype.pack = function(mav) {
+    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.time_utc, this.data_id, this.time_boot_ms, this.sequence, this.lat, this.lon, this.alt, this.relative_alt, this.q, this.camera_id, this.capture_result, this.state]));
+}
+
+/* 
 Actuator information message for electric motors. One message contains
 information of up to 4 actuators.
 
@@ -6910,14 +6954,14 @@ mavlink.messages.data_fetch.prototype.pack = function(mav) {
 }
 
 /* 
-WIP: Answer to DATA_LIST to confirm number of available itmes. If no
-DATA_LIST is preceeding DATA_AVAILABLE it is expected that the
+WIP: Answer to DATA_LIST to confirm number of available itmes.
+If no DATA_LIST is preceeding DATA_AVAILABLE it is expected that the
 receiving system will now start requesting the available items to
 store them. Successful fetch and store of all items will be confirmed
 by a DATA_AVAILABLE with 'count' confirming the number of fetched
-items. To delete all existing items on the receiving system 'count'
-can be set to 0, the successful deletion will be confirmed by a
-DATA_AVAILABLE with 'count' 0.
+items.          To delete all existing items on the receiving system
+'count' can be set to 0, the successful deletion will be confirmed by
+a DATA_AVAILABLE with 'count' 0.
 
                 target_system             : System ID (uint8_t)
                 target_component          : Component ID (uint8_t)
@@ -6953,7 +6997,10 @@ number of available items. If 'end' is set to a value below 0xffffffff
 but above or equal 'start' the receiving system will begin streaming
 the range of items requested. If the range cannot be machted with
 available data the receiving system shall reply with DATA_AVAILABLE
-indicating the current count.
+indicating the current count.          The items sent by the listing
+system will match the message defined by DATA_ITEM_TYPE. Each
+DATA_ITEM_TYPE message is required to have a uint32_t ID field called
+data_id uniquely identifying the item within the list.
 
                 target_system             : System ID (uint8_t)
                 target_component          : Component ID (uint8_t)
@@ -10057,6 +10104,7 @@ mavlink.map = {
         162: { format: '<IHBBB', type: mavlink.messages.fence_status, order_map: [2, 1, 3, 0, 4], crc_extra: 189 },
         180: { format: '<QH', type: mavlink.messages.terrain_sensor, order_map: [0, 1], crc_extra: 96 },
         181: { format: '<QHHHBBBB', type: mavlink.messages.distance_sensor_synced, order_map: [0, 1, 2, 3, 4, 5, 6, 7], crc_extra: 59 },
+        219: { format: '<QIIIiiii4fBbB', type: mavlink.messages.camera_image_captured_data, order_map: [1, 2, 0, 9, 3, 4, 5, 6, 7, 8, 10, 11], crc_extra: 70 },
         220: { format: '<4i4h4h4h4h4H4HBB', type: mavlink.messages.motor_actuator_data, order_map: [7, 8, 0, 1, 2, 3, 4, 5, 6], crc_extra: 3 },
         221: { format: '<IIBB240s', type: mavlink.messages.data_data, order_map: [2, 0, 1, 3, 4], crc_extra: 73 },
         222: { format: '<IIIBBB', type: mavlink.messages.data_fetch, order_map: [3, 4, 5, 0, 1, 2], crc_extra: 29 },
