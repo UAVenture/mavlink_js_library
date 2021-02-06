@@ -4,14 +4,17 @@ var events = require("events");
 var util = require("util");
 var Long = require('long');
 
-var MavlinkLib = function(srcSystem, srcComponent, sendDataCallback, protocolVersion = 2) {
+var MavlinkLib = function(srcSystem, srcComponent, sendDataCallback, protocolVersion = 0) {
 	var self = this;
 
     if (protocolVersion == 2) {
         mavlink.WIRE_PROTOCOL_VERSION = "2.0";
 
-    } else {
+    } else if (protocolVersion == 1) {
         mavlink.WIRE_PROTOCOL_VERSION = "1.0";
+
+    } else {
+        mavlink.WIRE_PROTOCOL_VERSION = "0.0";
     }
 
     self.mavlinkProcessor = new MAVLinkProcessor(null, srcSystem, srcComponent);

@@ -10223,10 +10223,12 @@ MAVLinkProcessor = function(logger, srcSystem, srcComponent) {
     if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
         this.protocol_marker = 253; //0xFD
         this.expected_length = 10;
+        this.current_version = 2;
     }
     else {
         this.protocol_marker = 254; //0xFE
         this.expected_length = 6;
+        this.current_version = 1;
     }
     this.little_endian = true;
 
@@ -10238,7 +10240,7 @@ MAVLinkProcessor = function(logger, srcSystem, srcComponent) {
     this.total_bytes_received = 0;
     this.total_receive_errors = 0;
     this.startup_time = Date.now();
-    
+
 }
 
 // Implements EventEmitter
@@ -10283,6 +10285,25 @@ MAVLinkProcessor.prototype.pushBuffer = function(data) {
 // Decode prefix.  Elides the prefix.
 MAVLinkProcessor.prototype.parsePrefix = function() {
 
+    // Auto sense protocol
+    if (this.buf.length >= 1) {
+        if (this.buf[0] == 253 && mavlink.WIRE_PROTOCOL_VERSION == '0.0') {
+            // Fix output version to 2
+            mavlink.WIRE_PROTOCOL_VERSION = '2.0';
+        }
+
+        if (this.buf[0] == 253) {
+            this.current_version = 2;
+            this.protocol_marker = 253;
+            this.expected_length = 10;
+
+        } else if (this.buf[0] == 254) {
+            this.current_version = 1;
+            this.protocol_marker = 254;
+            this.expected_length = 6;
+        }
+    }
+
     // Test for a message prefix.
     if( this.buf.length >= 1 && this.buf[0] != this.protocol_marker ) {
 
@@ -10290,7 +10311,7 @@ MAVLinkProcessor.prototype.parsePrefix = function() {
         var badPrefix = this.buf[0];
         this.bufInError = this.buf.slice(0,1);
         this.buf = this.buf.slice(1);
-        if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+        if (this.current_version == 2) {
             this.expected_length = 10;
         }
         else {
@@ -10315,7 +10336,7 @@ MAVLinkProcessor.prototype.parseLength = function() {
     
     if( this.buf.length >= 2 ) {
         var unpacked = jspack.Unpack('BB', this.buf.slice(0, 2));
-        if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+        if (this.current_version == 2) {
             this.expected_length = unpacked[1] + 12; // length of message + header + CRC
         }
         else {
@@ -10420,7 +10441,7 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
 
     // decode the header
     try {
-        if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+        if (this.current_version == 2) {
             unpacked = jspack.Unpack('cBBBBBBHB', msgbuf.slice(0, 10));
             magic = unpacked[0];
             mlen = unpacked[1];
@@ -10451,10 +10472,10 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
         throw new Error("Invalid MAVLink prefix ("+magic.charCodeAt(0)+")");
     }
 
-    if( mlen != msgbuf.length - 12 && mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+    if( mlen != msgbuf.length - 12 && this.current_version == 2) {
         throw new Error("Invalid MAVLink message length.  Got " + (msgbuf.length - 12) + " expected " + mlen + ", msgId=" + msgId);
     }
-    else if (mlen != msgbuf.length - 8 && mavlink.WIRE_PROTOCOL_VERSION == '1.0'){
+    else if (mlen != msgbuf.length - 8 && this.current_version == 1){
         throw new Error("Invalid MAVLink message length.  Got " + (msgbuf.length - 8) + " expected " + mlen + ", msgId=" + msgId);
     }
 
@@ -10483,20 +10504,20 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
     }
 
     var paylen = jspack.CalcLength(decoder.format);
-    if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+    if (this.current_version == 2) {
         var payload = msgbuf.slice(10, msgbuf.length - 2);
     }
     else {
         var payload = msgbuf.slice(6, msgbuf.length - 2);
     }
     //put any truncated 0's back in
-    if (paylen > payload.length && mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+    if (paylen > payload.length && this.current_version == 2) {
         payload =  Buffer.concat([payload, Buffer.alloc(paylen - payload.length)]);
     }
 
     // Decode the payload and reorder the fields to match the order map.
     try {
-        if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+        if (this.current_version == 2) {
             var t = jspack.Unpack(decoder.format, payload, true);
         }
         else {
@@ -10504,7 +10525,7 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
         }
     }
     catch (e) {
-        if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+        if (this.current_version == 2) {
             throw new Error('Unable to unpack MAVLink payload type='+decoder.type+' format='+decoder.format+' payloadLength='+ payload +': '+ e.message);
         }
         else {

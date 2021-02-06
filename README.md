@@ -65,10 +65,15 @@ var msg = mav.createParamSetMessage("MAV_HUD_FREQ", 5.354, true);
 ## Update from MAVLink Definitions
 
 ```
+# Generate from definitions:
 cd mavlink
 ./pymavlink/tools/mavgen.py --lang JavaScript --wire-protocol 2.0 -o ../mavlink_js_library_v2_private/ message_definitions/v1.0/common.xml
 cd ../mavlink_js_library_v2_private
+
+# Execute patch script and run tests:
 npm test
+
+# If tests were successful commit update:
 git commit -a
 git push
 ```

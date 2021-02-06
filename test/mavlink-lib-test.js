@@ -1,4 +1,7 @@
 var should = require('should');
+var sinon = require('sinon');
+require('should-sinon');
+
 var lib = require('../mavlink-lib.js');
 
 describe('Test module exports:', function () {
@@ -16,6 +19,12 @@ describe('Test module exports:', function () {
 
 describe('Test message handling:', function () {
 
+  // TODO:
+  // test send and check sequence number, sys and comp ID
+  // test array
+  // test message with "payload" field
+  // test message with "id" field
+
   it('create message with enum values', function () {
     var msg = new lib.messages.heartbeat(
         lib.mavlink.MAV_TYPE_GCS, // type
@@ -29,10 +38,125 @@ describe('Test message handling:', function () {
     msg.name.should.eql("HEARTBEAT");
   });
 
-  // test send and check sequence number, sys and comp ID
-  // test array
-  // test message with "payload" field
-  // test message with "id" field
+});
+
+describe('Test version handling:', function () {
+
+  it('parse mavlink v1 message (auto sense)', function () {
+    var callback = sinon.spy();
+
+    var a = new lib.MavlinkLib(255, 0, callback, 0);
+    var msg = a.parseData(Buffer.from("fe0900ff000000000000010cc004016885", 'hex'));
+    msg.length.should.be.eql(1);
+    msg[0].name.should.be.eql("HEARTBEAT");
+    lib.mavlink.WIRE_PROTOCOL_VERSION.should.be.eql("0.0");
+
+    // check sending is still v1
+    var msg = new lib.messages.heartbeat(0, 0, 0, 0, 0, 0);
+    a.sendMessage(msg);
+    callback.should.be.calledOnce();
+    callback.getCall(0).args[0][0].should.be.eql(254);
+  });
+
+  it('parse mavlink v2 message (auto sense)', function () {
+    var callback = sinon.spy();
+
+    var a = new lib.MavlinkLib(255, 0, callback, 0);
+    var msg = a.parseData(Buffer.from("fd09000000ff0000000000000000010cc00402454f", 'hex'));
+    msg.length.should.be.eql(1);
+    msg[0].name.should.be.eql("HEARTBEAT");
+    lib.mavlink.WIRE_PROTOCOL_VERSION.should.be.eql("2.0");
+
+    // check sending is now v2
+    var msg = new lib.messages.heartbeat(0, 0, 0, 0, 0, 0);
+    a.sendMessage(msg);
+    callback.should.be.calledOnce();
+
+    // verify full message after auto switch to v2
+    callback.getCall(0).args[0].should.be.eql(Buffer.from('fd01000000ff00000000008e39', 'hex'));
+
+    // can still read v1
+    var msg = a.parseData(Buffer.from("fe0900ff000000000000010cc004016885", 'hex'));
+    msg.length.should.be.eql(1);
+    msg[0].name.should.be.eql("HEARTBEAT");
+    lib.mavlink.WIRE_PROTOCOL_VERSION.should.be.eql("2.0");
+  });
+
+  it('parse mavlink v1 message (v2 can read v1)', function () {
+    var callback = sinon.spy();
+
+    var a = new lib.MavlinkLib(255, 0, callback, 2);
+    var msg = a.parseData(Buffer.from("fe0900ff000000000000010cc004016885", 'hex'));
+    msg.length.should.be.eql(1);
+    msg[0].name.should.be.eql("HEARTBEAT");
+    lib.mavlink.WIRE_PROTOCOL_VERSION.should.be.eql("2.0");
+
+    // check sending is v2
+    var msg = new lib.messages.heartbeat(0, 0, 0, 0, 0, 0);
+    a.sendMessage(msg);
+    callback.should.be.calledOnce();
+    callback.getCall(0).args[0][0].should.be.eql(253);
+  });
+
+  it('parse mavlink v2 message (v1 can read v2)', function () {
+    var callback = sinon.spy();
+
+    var a = new lib.MavlinkLib(255, 0, callback, 1);
+    var msg = a.parseData(Buffer.from("fd09000000ff0000000000000000010cc00402454f", 'hex'));
+    msg.length.should.be.eql(1);
+    msg[0].name.should.be.eql("HEARTBEAT");
+    lib.mavlink.WIRE_PROTOCOL_VERSION.should.be.eql("1.0");
+
+    // check sending is still v1
+    var msg = new lib.messages.heartbeat(0, 0, 0, 0, 0, 0);
+    a.sendMessage(msg);
+    callback.should.be.calledOnce();
+    callback.getCall(0).args[0][0].should.be.eql(254);
+  });
+
+  it('send v2 message with zeros', function () {
+    var callback = sinon.spy();
+
+    var a = new lib.MavlinkLib(255, 0, callback, 2);
+
+    var msg = new lib.messages.heartbeat(0, 0, 0, 0, 0, 0);
+    a.sendMessage(msg);
+    callback.should.be.calledOnce();
+    callback.getCall(0).args[0].should.be.eql(Buffer.from('fd01000000ff00000000008e39', 'hex'));
+  });
+
+  it('send v2 message full content', function () {
+    var callback = sinon.spy();
+
+    var a = new lib.MavlinkLib(255, 0, callback, 2);
+
+    var msg = new lib.messages.heartbeat(1, 2, 3, 4, 5, 6);
+    a.sendMessage(msg);
+    callback.should.be.calledOnce();
+    callback.getCall(0).args[0].should.be.eql(Buffer.from('fd09000000ff00000000040000000102030506c9bd', 'hex'));
+  });
+
+  it('send v1 message with zeros', function () {
+    var callback = sinon.spy();
+
+    var a = new lib.MavlinkLib(255, 0, callback, 1);
+
+    var msg = new lib.messages.heartbeat(0, 0, 0, 0, 0, 0);
+    a.sendMessage(msg);
+    callback.should.be.calledOnce();
+    callback.getCall(0).args[0].should.be.eql(Buffer.from('fe0900ff000000000000000000000013b7', 'hex'));
+  });
+
+  it('send v1 message full content', function () {
+    var callback = sinon.spy();
+
+    var a = new lib.MavlinkLib(255, 0, callback, 1);
+
+    var msg = new lib.messages.heartbeat(1, 2, 3, 4, 5, 6);
+    a.sendMessage(msg);
+    callback.should.be.calledOnce();
+    callback.getCall(0).args[0].should.be.eql(Buffer.from('fe0900ff00000400000001020305068c5d', 'hex'));
+  });
 
 });
 
