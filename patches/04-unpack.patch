@@ -1,0 +1,13 @@
+diff --git a/mavlink.patched.js b/mavlink.patched.js
+index be285ff..87761b2 100644
+--- a/mavlink.patched.js
++++ b/mavlink.patched.js
+@@ -10573,7 +10573,7 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
+     // Decode the payload and reorder the fields to match the order map.
+     try {
+         if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+-            var t = jspack.Unpack(decoder.format, payload);
++            var t = jspack.Unpack(decoder.format, payload, true);
+         }
+         else {
+             var t = jspack.Unpack(decoder.format, payload);

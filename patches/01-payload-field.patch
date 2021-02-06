@@ -1,0 +1,39 @@
+diff --git a/mavlink.patched.js b/mavlink.patched.js
+index 86dc9f6..ddd0827 100644
+--- a/mavlink.patched.js
++++ b/mavlink.patched.js
+@@ -86,19 +86,19 @@ mavlink.message.prototype.set = function(args) {
+ // including header and message CRC.
+ mavlink.message.prototype.pack = function(mav, crc_extra, payload) {
+ 
+-    this.payload = payload;
+-    var plen = this.payload.length;
++    this._payload = payload;
++    var plen = this._payload.length;
+     //in MAVLink2 we can strip trailing zeros off payloads. This allows for simple
+     // variable length arrays and smaller packets
+     if (mavlink.WIRE_PROTOCOL_VERSION == '2.0') {
+-        while (plen > 1 && this.payload[plen-1] == 0) {
++        while (plen > 1 && this._payload[plen-1] == 0) {
+                 plen = plen - 1;
+         }
+-        this.payload = this.payload.slice(0, plen);
++        this._payload = this._payload.slice(0, plen);
+     }
+     var incompat_flags = 0;
+-    this.header = new mavlink.header(this._id, this.payload.length, mav.seq, mav.srcSystem, mav.srcComponent, incompat_flags, 0,);    
+-    this.msgbuf = this.header.pack().concat(this.payload);
++    this.header = new mavlink.header(this._id, this._payload.length, mav.seq, mav.srcSystem, mav.srcComponent, incompat_flags, 0,);    
++    this.msgbuf = this.header.pack().concat(this._payload);
+     var crc = mavlink.x25Crc(this.msgbuf.slice(1));
+ 
+     // For now, assume always using crc_extra = True.  TODO: check/fix this.
+@@ -10603,7 +10603,7 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
+         throw new Error('Unable to instantiate MAVLink message of type '+decoder.type+' : ' + e.message);
+     }
+     m.msgbuf = msgbuf;
+-    m.payload = payload
++    m._payload = payload
+     m.crc = receivedChecksum;
+     m.header = new mavlink.header(msgId, mlen, seq, srcSystem, srcComponent, incompat_flags, compat_flags);
+     this.log(m);

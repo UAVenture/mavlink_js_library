@@ -1,0 +1,13 @@
+diff --git a/mavlink.patched.js b/mavlink.patched.js
+index ddd0827..b67e780 100644
+--- a/mavlink.patched.js
++++ b/mavlink.patched.js
+@@ -67,7 +67,7 @@ mavlink.header.prototype.pack = function() {
+         return jspack.Pack('BBBBBBBHB', [253, this.mlen, this.incompat_flags, this.compat_flags, this.seq, this.srcSystem, this.srcComponent, ((this.msgId & 0xFF) << 8) | ((this.msgId >> 8) & 0xFF), this.msgId>>16]);
+     }
+     else {
+-        return jspack.Pack('BBBBBB', [253, this.mlen, this.seq, this.srcSystem, this.srcComponent, this.msgId]);
++        return jspack.Pack('BBBBBB', [254, this.mlen, this.seq, this.srcSystem, this.srcComponent, this.msgId]);
+     }
+ }
+ 

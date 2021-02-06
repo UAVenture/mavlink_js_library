@@ -10521,7 +10521,7 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
             var t = jspack.Unpack(decoder.format, payload, true);
         }
         else {
-            var t = jspack.Unpack(decoder.format, payload, true);
+            var t = jspack.Unpack(decoder.format, payload);
         }
     }
     catch (e) {
