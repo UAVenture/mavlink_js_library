@@ -593,18 +593,28 @@ mavlink.MAV_SYS_STATUS_SENSOR_RC_RECEIVER = 65536 // 0x10000 rc receiver
 mavlink.MAV_SYS_STATUS_SENSOR_3D_GYRO2 = 131072 // 0x20000 2nd 3D gyro
 mavlink.MAV_SYS_STATUS_SENSOR_3D_ACCEL2 = 262144 // 0x40000 2nd 3D accelerometer
 mavlink.MAV_SYS_STATUS_SENSOR_3D_MAG2 = 524288 // 0x80000 2nd 3D magnetometer
-mavlink.MAV_SYS_STATUS_GEOFENCE = 1048576 // 0x100000 geofence
+mavlink.MAV_SYS_STATUS_GEOFENCE = 1048576 // 0x100000 DEPRECATED: Use EXTENDED_HUD.failures == MAV_FAILURE_GEOFENCE
 mavlink.MAV_SYS_STATUS_AHRS = 2097152 // 0x200000 AHRS subsystem health
 mavlink.MAV_SYS_STATUS_TERRAIN = 4194304 // 0x400000 Terrain subsystem health
 mavlink.MAV_SYS_STATUS_REVERSE_MOTOR = 8388608 // 0x800000 Motors are reversed
-mavlink.MAV_SYS_STATUS_LOGGING = 16777216 // 0x1000000 Logging
+mavlink.MAV_SYS_STATUS_LOGGING = 16777216 // 0x1000000 DEPRECATED: Use EXTENDED_HUD.logging_state
 mavlink.MAV_SYS_STATUS_SENSOR_BATTERY = 33554432 // 0x2000000 Battery
-mavlink.MAV_SYS_STATUS_STORAGE = 67108864 // 0x4000000 Onboard storage health
-mavlink.MAV_SYS_STATUS_GYRO_CONSISTENT = 134217728 // 0x8000000 Gyros are consistent
-mavlink.MAV_SYS_STATUS_ACCEL_CONSISTENT = 268435456 // 0x10000000 Accels are consistent
-mavlink.MAV_SYS_STATUS_MAG_CONSISTENT = 536870912 // 0x20000000 Mags are consistent
-mavlink.MAV_SYS_STATUS_AVIONICS_POWER = 1073741824 // 0x40000000 Avionics power ok
-mavlink.MAV_SYS_STATUS_SENSOR_ENUM_END = 1073741825 // 
+mavlink.MAV_SYS_STATUS_SENSOR_PROXIMITY = 67108864 // 0x4000000 Proximity
+mavlink.MAV_SYS_STATUS_SENSOR_SATCOM = 134217728 // 0x8000000 Satellite Communication
+mavlink.MAV_SYS_STATUS_PREARM_CHECK = 268435456 // 0x10000000 pre-arm check status. Always healthy when armed
+mavlink.MAV_SYS_STATUS_OBSTACLE_AVOIDANCE = 536870912 // 0x20000000 Avoidance/collision prevention
+mavlink.MAV_SYS_STATUS_SENSOR_ENUM_END = 536870913 // 
+
+// MAV_SYS_STATUS_SENSOR_E1
+mavlink.MAV_SYS_STATUS_E1_GYRO_CONSISTENT = 1 // 0x1 Gyros are consistent
+mavlink.MAV_SYS_STATUS_E1_ACCEL_CONSISTENT = 2 // 0x2 Accels are consistent
+mavlink.MAV_SYS_STATUS_E1_MAG_CONSISTENT = 4 // 0x4 Mags are consistent
+mavlink.MAV_SYS_STATUS_E1_AVIONICS_POWER = 8 // 0x8 Avionics power ok
+mavlink.MAV_SYS_STATUS_E1_STORAGE = 16 // 0x10 Onboard storage health
+mavlink.MAV_SYS_STATUS_E1_BGPS = 32 // 0x20 Blended GPS health
+mavlink.MAV_SYS_STATUS_E1_COMPANION = 64 // 0x40 Companion computer operational
+mavlink.MAV_SYS_STATUS_E1_ADSB = 128 // 0x80 ADSB transponder operational
+mavlink.MAV_SYS_STATUS_SENSOR_E1_ENUM_END = 129 // 
 
 // MAV_FAILURE
 mavlink.MAV_FAILURE_FW_ENGINE = 1 // Loss of fixed-wing thrust
@@ -622,7 +632,8 @@ mavlink.MAV_FAILURE_DATA_LINK = 2048 // Data link not available
 mavlink.MAV_FAILURE_VOTED_SENSOR = 4096 // A voted sensor failure has been detected (accel, gyro, mag, baro and
                         // dpres)
 mavlink.MAV_FAILURE_MISSION_INVALID = 8192 // The currently uloaded mission failed feasibility checks
-mavlink.MAV_FAILURE_ENUM_END = 8193 // 
+mavlink.MAV_FAILURE_GEOFENCE = 16384 // Vehicle is in geofence violation
+mavlink.MAV_FAILURE_ENUM_END = 16385 // 
 
 // MAV_CONTROL_MODE
 mavlink.MAV_CONTROL_MODE_PREFLIGHT = 1 // Pre-flight check control mode
@@ -1270,7 +1281,9 @@ mavlink.MAV_CMD_SET_AB_POSITION = 40101 // Set the current AB position to use fo
                         // transmit this command.
 mavlink.MAV_CMD_SET_AB_ENABLED = 40102 // Turn AB tracking on or off. The AB positions need to be set in order
                         // to enable it.
-mavlink.MAV_CMD_ENUM_END = 40103 // 
+mavlink.MAV_CMD_GET_GPS_DEVICE_INFO = 40200 // Request GPS device information
+mavlink.MAV_CMD_RESTART_GPS = 40201 // Command the GPS device to restart
+mavlink.MAV_CMD_ENUM_END = 40202 // 
 
 // MAV_DATA_STREAM
 mavlink.MAV_DATA_STREAM_ALL = 0 // Enable all data streams
@@ -2203,7 +2216,31 @@ mavlink.TRIM_MODE = 3 // Put vehicle into trim mode where the main actuator     
                         // direct manual control and additional
                         // actuator controls will behave according to
                         // the vehicle type.
-mavlink.PREFLIGHT_ACTUATOR_CHECK_REQUEST_ENUM_END = 4 // 
+mavlink.RUN_PREFLIGHT_CHECK = 4 // Trigger a fresh run of the internal preflight checks updating sensor
+                        // states.
+mavlink.ARMED_CHECK = 5 // Put vehicle into armed check mode and allow to set certain options for
+                        // bench testing.
+mavlink.PREFLIGHT_ACTUATOR_CHECK_REQUEST_ENUM_END = 6 // 
+
+// PREFLIGHT_ACTUATOR_CHECK_CONTROL_SURFACES
+mavlink.CHECK_CONTROL_SURFACES_ROLL = 0 // 
+mavlink.CHECK_CONTROL_SURFACES_PITCH = 1 // 
+mavlink.CHECK_CONTROL_SURFACES_YAW = 2 // 
+mavlink.PREFLIGHT_ACTUATOR_CHECK_CONTROL_SURFACES_ENUM_END = 3 // 
+
+// PREFLIGHT_ACTUATOR_ARMED_CHECK_AXIS
+mavlink.ARMED_CHECK_DISABLE_ROLL_I = 0 // 
+mavlink.ARMED_CHECK_DISABLE_PITCH_I = 1 // 
+mavlink.ARMED_CHECK_DISABLE_YAW_I = 2 // 
+mavlink.ARMED_CHECK_DISABLE_ROLL_R = 4 // 
+mavlink.ARMED_CHECK_DISABLE_PITCH_R = 8 // 
+mavlink.ARMED_CHECK_DISABLE_YAW_R = 16 // 
+mavlink.PREFLIGHT_ACTUATOR_ARMED_CHECK_AXIS_ENUM_END = 17 // 
+
+// PREFLIGHT_ACTUATOR_ARMED_CHECK_FUNCTION
+mavlink.ARMED_CHECK_DISABLE_PERM_STAB = 0 // 
+mavlink.ARMED_CHECK_DISABLE_VTOL_SAFETY = 1 // 
+mavlink.PREFLIGHT_ACTUATOR_ARMED_CHECK_FUNCTION_ENUM_END = 2 // 
 
 // DATA_ITEM_TYPE
 mavlink.CAMERA_IMAGE_CAPTURED_DATA = 0 // 
@@ -2216,6 +2253,11 @@ mavlink.A_SET = 1 //
 mavlink.AB_SET = 2 // AB positions are set and copter is in line tracking mode.
 mavlink.AB_SET_NOT_ENGAGED = 3 // AB positions are set but line tracking is not enabled at the moment.
 mavlink.CROP_SPRAYING_MODE_ENUM_END = 4 // 
+
+// GPS_DEVICE_TYPE
+mavlink.UNKNOWN = 0 // 
+mavlink.TRIMBLE_MB_TWO = 1 // 
+mavlink.GPS_DEVICE_TYPE_ENUM_END = 2 // 
 
 // message IDs
 mavlink.MAVLINK_MSG_ID_BAD_DATA = -1
@@ -2432,6 +2474,7 @@ mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_SYSTEM = 12904
 mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_OPERATOR_ID = 12905
 mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_MESSAGE_PACK = 12915
 mavlink.MAVLINK_MSG_ID_CROP_SPRAYING_STATUS = 40100
+mavlink.MAVLINK_MSG_ID_GPS_DEVICE_INFO = 40200
 
 mavlink.messages = {};
 
@@ -2498,7 +2541,7 @@ timeout.
                 battery_remaining         : Battery energy remaining, -1: Battery remaining energy not sent by autopilot (int8_t)
                 drop_rate_comm            : Communication drop rate, (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV) (uint16_t)
                 errors_comm               : Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV) (uint16_t)
-                errors_count1             : Autopilot-specific errors (uint16_t)
+                errors_count1             : AirRails custom bit field for additional sensor health states as in onboard_control_sensors_health, see MAV_SYS_STATUS_SENSOR_E1. (uint16_t)
                 errors_count2             : Autopilot-specific errors (uint16_t)
                 errors_count3             : Autopilot-specific errors (uint16_t)
                 errors_count4             : Autopilot-specific errors (uint16_t)
@@ -6992,15 +7035,16 @@ mavlink.messages.data_available.prototype.pack = function(mav) {
 
 /* 
 WIP: Request a list of stored data items. If 'end' is set to
-0xffffffff the receiving system will inform with DATA_AVAILABLE the
-number of available items. If 'end' is set to a value below 0xffffffff
-but above or equal 'start' the receiving system will begin streaming
-the range of items requested. If the range cannot be machted with
-available data the receiving system shall reply with DATA_AVAILABLE
-indicating the current count.          The items sent by the listing
-system will match the message defined by DATA_ITEM_TYPE. Each
-DATA_ITEM_TYPE message is required to have a uint32_t ID field called
-data_id uniquely identifying the item within the list.
+0xffffffff the receiving system will inform the requester with
+DATA_AVAILABLE about the number of available items. If 'end' is set to
+a value below 0xffffffff but above or equal 'start' the receiving
+system will begin streaming the range of items requested. If the range
+cannot be machted with available data the receiving system shall reply
+with DATA_AVAILABLE indicating the current count.          The items
+sent back by the receiving system will be in the form of the MAVLink
+message defined by DATA_ITEM_TYPE. This message is required to have a
+uint32_t ID field called data_id uniquely identifying the item within
+the list.
 
                 target_system             : System ID (uint8_t)
                 target_component          : Component ID (uint8_t)
@@ -7107,20 +7151,22 @@ Extended HUD information.
                 failures                  : See MAV_FAILURE (uint32_t)
                 control_mode              : Autopilot specific control mode flags. (uint32_t)
                 running_processes         : Currently running processes. (uint16_t)
-                log_time_remaining        : Remaining amount of seconds for flight logging until storage is full. (uint32_t)
+                log_time_remaining        : Estimation of remaining amount of seconds for flight logging until storage is full. (uint32_t)
                 temperature               : Autopilot temperature (centi-degrees C). (int16_t)
                 temperature_air           : Air temperature (centi-degrees C) from airspeed sensor. (int16_t)
+                logging_state             : bit 0: logging running. (uint8_t)
+                safety_state              : bit 0: safety switch available, 1: safety enabled. (uint8_t)
 
 */
-mavlink.messages.extended_hud = function(throttle, rpm, failures, control_mode, running_processes, log_time_remaining, temperature, temperature_air) {
+mavlink.messages.extended_hud = function(throttle, rpm, failures, control_mode, running_processes, log_time_remaining, temperature, temperature_air, logging_state, safety_state) {
 
-    this.format = '<2iIII2hHhh';
+    this.format = '<2iIII2hHhhBB';
     this._id = mavlink.MAVLINK_MSG_ID_EXTENDED_HUD;
-    this.order_map = [4, 0, 1, 2, 5, 3, 6, 7];
+    this.order_map = [4, 0, 1, 2, 5, 3, 6, 7, 8, 9];
     this.crc_extra = 77;
     this.name = 'EXTENDED_HUD';
 
-    this.fieldnames = ['throttle', 'rpm', 'failures', 'control_mode', 'running_processes', 'log_time_remaining', 'temperature', 'temperature_air'];
+    this.fieldnames = ['throttle', 'rpm', 'failures', 'control_mode', 'running_processes', 'log_time_remaining', 'temperature', 'temperature_air', 'logging_state', 'safety_state'];
 
 
     this.set(arguments);
@@ -7130,7 +7176,7 @@ mavlink.messages.extended_hud = function(throttle, rpm, failures, control_mode, 
 mavlink.messages.extended_hud.prototype = new mavlink.message;
 
 mavlink.messages.extended_hud.prototype.pack = function(mav) {
-    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.rpm, this.failures, this.control_mode, this.log_time_remaining, this.throttle, this.running_processes, this.temperature, this.temperature_air]));
+    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.rpm, this.failures, this.control_mode, this.log_time_remaining, this.throttle, this.running_processes, this.temperature, this.temperature_air, this.logging_state, this.safety_state]));
 }
 
 /* 
@@ -9978,6 +10024,35 @@ mavlink.messages.crop_spraying_status.prototype.pack = function(mav) {
     return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.agl_setpoint, this.a_lat, this.a_lon, this.b_lat, this.b_lon, this.mode]));
 }
 
+/* 
+Status information for GPS devices.
+
+                gps_type                  : GPS device type (uint16_t)
+                gps_num                   : GPS device number on system, usually 1 or 2 (uint8_t)
+                data                      : GPS data (uint8_t)
+
+*/
+mavlink.messages.gps_device_info = function(gps_type, gps_num, data) {
+
+    this.format = '<HB250s';
+    this._id = mavlink.MAVLINK_MSG_ID_GPS_DEVICE_INFO;
+    this.order_map = [0, 1, 2];
+    this.crc_extra = 234;
+    this.name = 'GPS_DEVICE_INFO';
+
+    this.fieldnames = ['gps_type', 'gps_num', 'data'];
+
+
+    this.set(arguments);
+
+}
+        
+mavlink.messages.gps_device_info.prototype = new mavlink.message;
+
+mavlink.messages.gps_device_info.prototype.pack = function(mav) {
+    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.gps_type, this.gps_num, this.data]));
+}
+
 
 
 mavlink.map = {
@@ -10112,7 +10187,7 @@ mavlink.map = {
         224: { format: '<IIBBB', type: mavlink.messages.data_list, order_map: [2, 3, 4, 0, 1], crc_extra: 121 },
         225: { format: '<QIIiiii4fBb', type: mavlink.messages.camera_image_captured_v1, order_map: [1, 0, 8, 2, 3, 4, 5, 6, 7, 9], crc_extra: 214 },
         226: { format: '<IIHHHHB', type: mavlink.messages.extended_log_entry, order_map: [2, 3, 4, 0, 1, 6, 5], crc_extra: 141 },
-        227: { format: '<2iIII2hHhh', type: mavlink.messages.extended_hud, order_map: [4, 0, 1, 2, 5, 3, 6, 7], crc_extra: 77 },
+        227: { format: '<2iIII2hHhhBB', type: mavlink.messages.extended_hud, order_map: [4, 0, 1, 2, 5, 3, 6, 7, 8, 9], crc_extra: 77 },
         228: { format: '<IHBBB', type: mavlink.messages.mission_check, order_map: [2, 3, 1, 0, 4], crc_extra: 205 },
         229: { format: '<IIIB12s16s', type: mavlink.messages.license_status, order_map: [3, 0, 1, 2, 4, 5], crc_extra: 207 },
         230: { format: '<QffffffffH', type: mavlink.messages.estimator_status, order_map: [0, 9, 1, 2, 3, 4, 5, 6, 7, 8], crc_extra: 163 },
@@ -10194,6 +10269,7 @@ mavlink.map = {
         12905: { format: '<B20s', type: mavlink.messages.open_drone_id_operator_id, order_map: [0, 1], crc_extra: 56 },
         12915: { format: '<BB250s', type: mavlink.messages.open_drone_id_message_pack, order_map: [0, 1, 2], crc_extra: 67 },
         40100: { format: '<fiiiiB', type: mavlink.messages.crop_spraying_status, order_map: [5, 0, 1, 2, 3, 4], crc_extra: 49 },
+        40200: { format: '<HB250s', type: mavlink.messages.gps_device_info, order_map: [0, 1, 2], crc_extra: 234 },
 }
 
 
