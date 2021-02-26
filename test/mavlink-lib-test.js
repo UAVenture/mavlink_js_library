@@ -38,6 +38,35 @@ describe('Test message handling:', function () {
     msg.name.should.eql("HEARTBEAT");
   });
 
+  it('create v2 message', function () {
+    var callback = sinon.spy();
+    var a = new lib.MavlinkLib(255, 0, callback, 2);
+
+    //                                 airspeed, groundspeed, heading, throttle, alt, climb
+    var msg = new lib.messages.vfr_hud(24.321456, 27.12354, 45, 68, 465.12354, 1.231248);
+    a.sendMessage(msg);
+
+    callback.should.be.calledOnce();
+
+    var hex = Buffer.from(callback.getCall(0).args[0], 'binary').toString('hex');
+    hex.should.eql("fd13000000ff004a00005892c24103fdd841d08fe84389999d3f2d0044aef5");
+  });
+
+  it('parse v2 message', function () {
+    var callback = sinon.spy();
+    var a = new lib.MavlinkLib(255, 0, callback, 2);
+
+    var msg = a.parseData(Buffer.from("fd13000000ff004a00005892c24103fdd841d08fe84389999d3f2d0044aef5", 'hex'));
+
+    msg.length.should.be.eql(1);
+    msg[0].name.should.be.eql("VFR_HUD");
+    msg[0].airspeed.should.be.eql(24.321456909179688);
+    msg[0].groundspeed.should.be.eql(27.1235408782959);
+    msg[0].heading.should.be.eql(45);
+    msg[0].throttle.should.be.eql(68);
+    msg[0].alt.should.be.eql(465.12353515625);
+    msg[0].climb.should.be.eql(1.2312480211257935);
+  });
 });
 
 describe('Test version handling:', function () {
