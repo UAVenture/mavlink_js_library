@@ -2384,13 +2384,14 @@ mavlink.MAVLINK_MSG_ID_LANDING_TARGET_LSF_INT = 150
 mavlink.MAVLINK_MSG_ID_FENCE_STATUS = 162
 mavlink.MAVLINK_MSG_ID_TERRAIN_SENSOR = 180
 mavlink.MAVLINK_MSG_ID_DISTANCE_SENSOR_SYNCED = 181
+mavlink.MAVLINK_MSG_ID_MAG_CAL_REPORT = 192
 mavlink.MAVLINK_MSG_ID_CAMERA_IMAGE_CAPTURED_DATA = 219
 mavlink.MAVLINK_MSG_ID_MOTOR_ACTUATOR_DATA = 220
 mavlink.MAVLINK_MSG_ID_DATA_DATA = 221
 mavlink.MAVLINK_MSG_ID_DATA_FETCH = 222
 mavlink.MAVLINK_MSG_ID_DATA_AVAILABLE = 223
 mavlink.MAVLINK_MSG_ID_DATA_LIST = 224
-mavlink.MAVLINK_MSG_ID_CAMERA_IMAGE_CAPTURED_V1 = 225
+mavlink.MAVLINK_MSG_ID_EFI_STATUS = 225
 mavlink.MAVLINK_MSG_ID_EXTENDED_LOG_ENTRY = 226
 mavlink.MAVLINK_MSG_ID_EXTENDED_HUD = 227
 mavlink.MAVLINK_MSG_ID_MISSION_CHECK = 228
@@ -2458,6 +2459,7 @@ mavlink.MAVLINK_MSG_ID_DEBUG_FLOAT_ARRAY = 350
 mavlink.MAVLINK_MSG_ID_ORBIT_EXECUTION_STATUS = 360
 mavlink.MAVLINK_MSG_ID_SMART_BATTERY_INFO = 370
 mavlink.MAVLINK_MSG_ID_SMART_BATTERY_STATUS = 371
+mavlink.MAVLINK_MSG_ID_GENERATOR_STATUS = 373
 mavlink.MAVLINK_MSG_ID_ACTUATOR_OUTPUT_STATUS = 375
 mavlink.MAVLINK_MSG_ID_TIME_ESTIMATE_TO_TARGET = 380
 mavlink.MAVLINK_MSG_ID_TUNNEL = 385
@@ -6855,6 +6857,51 @@ mavlink.messages.distance_sensor_synced.prototype.pack = function(mav) {
 }
 
 /* 
+Reports results of completed compass calibration. Sent until
+MAG_CAL_ACK received.
+
+                compass_id                : Compass being calibrated. (uint8_t)
+                cal_mask                  : Bitmask of compasses being calibrated. (uint8_t)
+                cal_status                : Calibration Status. (uint8_t)
+                autosaved                 : 0=requires a MAV_CMD_DO_ACCEPT_MAG_CAL, 1=saved to parameters. (uint8_t)
+                fitness                   : RMS milligauss residuals. (float)
+                ofs_x                     : X offset. (float)
+                ofs_y                     : Y offset. (float)
+                ofs_z                     : Z offset. (float)
+                diag_x                    : X diagonal (matrix 11). (float)
+                diag_y                    : Y diagonal (matrix 22). (float)
+                diag_z                    : Z diagonal (matrix 33). (float)
+                offdiag_x                 : X off-diagonal (matrix 12 and 21). (float)
+                offdiag_y                 : Y off-diagonal (matrix 13 and 31). (float)
+                offdiag_z                 : Z off-diagonal (matrix 32 and 23). (float)
+                orientation_confidence        : Confidence in orientation (higher is better). (float)
+                old_orientation           : orientation before calibration. (uint8_t)
+                new_orientation           : orientation after calibration. (uint8_t)
+                scale_factor              : field radius correction factor (float)
+
+*/
+mavlink.messages.mag_cal_report = function(compass_id, cal_mask, cal_status, autosaved, fitness, ofs_x, ofs_y, ofs_z, diag_x, diag_y, diag_z, offdiag_x, offdiag_y, offdiag_z, orientation_confidence, old_orientation, new_orientation, scale_factor) {
+
+    this.format = '<ffffffffffBBBBfBBf';
+    this.id = mavlink.MAVLINK_MSG_ID_MAG_CAL_REPORT;
+    this.order_map = [10, 11, 12, 13, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17];
+    this.crc_extra = 36;
+    this.name = 'MAG_CAL_REPORT';
+
+    this.fieldnames = ['compass_id', 'cal_mask', 'cal_status', 'autosaved', 'fitness', 'ofs_x', 'ofs_y', 'ofs_z', 'diag_x', 'diag_y', 'diag_z', 'offdiag_x', 'offdiag_y', 'offdiag_z', 'orientation_confidence', 'old_orientation', 'new_orientation', 'scale_factor'];
+
+
+    this.set(arguments);
+
+}
+        
+mavlink.messages.mag_cal_report.prototype = new mavlink.message;
+
+mavlink.messages.mag_cal_report.prototype.pack = function(mav) {
+    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.fitness, this.ofs_x, this.ofs_y, this.ofs_z, this.diag_x, this.diag_y, this.diag_z, this.offdiag_x, this.offdiag_y, this.offdiag_z, this.compass_id, this.cal_mask, this.cal_status, this.autosaved, this.orientation_confidence, this.old_orientation, this.new_orientation, this.scale_factor]));
+}
+
+/* 
 Information about a captured image
 
                 data_id                   : Data item ID (uint32_t)
@@ -7075,39 +7122,46 @@ mavlink.messages.data_list.prototype.pack = function(mav) {
 }
 
 /* 
-Information about a captured image
+EFI status output
 
-                time_boot_ms              : Timestamp (milliseconds since system boot) (uint32_t)
-                time_utc                  : Timestamp (microseconds since UNIX epoch) in UTC. 0 for unknown. (uint64_t)
-                camera_id                 : Camera ID (1 for first, 2 for second, etc.) (uint8_t)
-                sequence                  : Zero based index of this image (uint32_t)
-                lat                       : Latitude, expressed as degrees * 1E7 where image was taken (int32_t)
-                lon                       : Longitude, expressed as degrees * 1E7 where capture was taken (int32_t)
-                alt                       : Altitude in meters, expressed as * 1E3 (AMSL, not WGS84) where image was taken (int32_t)
-                relative_alt              : Altitude above ground in meters, expressed as * 1E3 where image was taken (int32_t)
-                q                         : Quaternion of camera orientation (w, x, y, z order, zero-rotation is 0, 0, 0, 0) (float)
-                capture_result            : Boolean indicating success (1) or failure (0) while capturing this image. (int8_t)
+                health                    : EFI health status (uint8_t)
+                ecu_index                 : ECU index (float)
+                rpm                       : RPM (float)
+                fuel_consumed             : Fuel consumed (float)
+                fuel_flow                 : Fuel flow rate (float)
+                engine_load               : Engine load (float)
+                throttle_position         : Throttle position (float)
+                spark_dwell_time          : Spark dwell time (float)
+                barometric_pressure        : Barometric pressure (float)
+                intake_manifold_pressure        : Intake manifold pressure( (float)
+                intake_manifold_temperature        : Intake manifold temperature (float)
+                cylinder_head_temperature        : Cylinder head temperature (float)
+                ignition_timing           : Ignition timing (Crank angle degrees) (float)
+                injection_time            : Injection time (float)
+                exhaust_gas_temperature        : Exhaust gas temperature (float)
+                throttle_out              : Output throttle (float)
+                pt_compensation           : Pressure/temperature compensation (float)
 
 */
-mavlink.messages.camera_image_captured_v1 = function(time_boot_ms, time_utc, camera_id, sequence, lat, lon, alt, relative_alt, q, capture_result) {
+mavlink.messages.efi_status = function(health, ecu_index, rpm, fuel_consumed, fuel_flow, engine_load, throttle_position, spark_dwell_time, barometric_pressure, intake_manifold_pressure, intake_manifold_temperature, cylinder_head_temperature, ignition_timing, injection_time, exhaust_gas_temperature, throttle_out, pt_compensation) {
 
-    this.format = '<QIIiiii4fBb';
-    this.id = mavlink.MAVLINK_MSG_ID_CAMERA_IMAGE_CAPTURED_V1;
-    this.order_map = [1, 0, 8, 2, 3, 4, 5, 6, 7, 9];
-    this.crc_extra = 214;
-    this.name = 'CAMERA_IMAGE_CAPTURED_V1';
+    this.format = '<ffffffffffffffffB';
+    this.id = mavlink.MAVLINK_MSG_ID_EFI_STATUS;
+    this.order_map = [16, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    this.crc_extra = 208;
+    this.name = 'EFI_STATUS';
 
-    this.fieldnames = ['time_boot_ms', 'time_utc', 'camera_id', 'sequence', 'lat', 'lon', 'alt', 'relative_alt', 'q', 'capture_result'];
+    this.fieldnames = ['health', 'ecu_index', 'rpm', 'fuel_consumed', 'fuel_flow', 'engine_load', 'throttle_position', 'spark_dwell_time', 'barometric_pressure', 'intake_manifold_pressure', 'intake_manifold_temperature', 'cylinder_head_temperature', 'ignition_timing', 'injection_time', 'exhaust_gas_temperature', 'throttle_out', 'pt_compensation'];
 
 
     this.set(arguments);
 
 }
         
-mavlink.messages.camera_image_captured_v1.prototype = new mavlink.message;
+mavlink.messages.efi_status.prototype = new mavlink.message;
 
-mavlink.messages.camera_image_captured_v1.prototype.pack = function(mav) {
-    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.time_utc, this.time_boot_ms, this.sequence, this.lat, this.lon, this.alt, this.relative_alt, this.q, this.camera_id, this.capture_result]));
+mavlink.messages.efi_status.prototype.pack = function(mav) {
+    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.ecu_index, this.rpm, this.fuel_consumed, this.fuel_flow, this.engine_load, this.throttle_position, this.spark_dwell_time, this.barometric_pressure, this.intake_manifold_pressure, this.intake_manifold_temperature, this.cylinder_head_temperature, this.ignition_timing, this.injection_time, this.exhaust_gas_temperature, this.throttle_out, this.pt_compensation, this.health]));
 }
 
 /* 
@@ -9481,6 +9535,44 @@ mavlink.messages.smart_battery_status.prototype.pack = function(mav) {
 }
 
 /* 
+Telemetry of power generation system. Alternator or mechanical
+generator.
+
+                status                    : Status flags. (uint64_t)
+                generator_speed           : Speed of electrical generator or alternator. UINT16_MAX: field not provided. (uint16_t)
+                battery_current           : Current into/out of battery. Positive for out. Negative for in. NaN: field not provided. (float)
+                load_current              : Current going to the UAV. If battery current not available this is the DC current from the generator. Positive for out. Negative for in. NaN: field not provided (float)
+                power_generated           : The power being generated. NaN: field not provided (float)
+                bus_voltage               : Voltage of the bus seen at the generator, or battery bus if battery bus is controlled by generator and at a different voltage to main bus. (float)
+                rectifier_temperature        : The temperature of the rectifier or power converter. INT16_MAX: field not provided. (int16_t)
+                bat_current_setpoint        : The target battery current. Positive for out. Negative for in. NaN: field not provided (float)
+                generator_temperature        : The temperature of the mechanical motor, fuel cell core or generator. INT16_MAX: field not provided. (int16_t)
+                runtime                   : Seconds this generator has run since it was rebooted. UINT32_MAX: field not provided. (uint32_t)
+                time_until_maintenance        : Seconds until this generator requires maintenance.  A negative value indicates maintenance is past-due. INT32_MAX: field not provided. (int32_t)
+
+*/
+mavlink.messages.generator_status = function(status, generator_speed, battery_current, load_current, power_generated, bus_voltage, rectifier_temperature, bat_current_setpoint, generator_temperature, runtime, time_until_maintenance) {
+
+    this.format = '<QfffffIiHhh';
+    this.id = mavlink.MAVLINK_MSG_ID_GENERATOR_STATUS;
+    this.order_map = [0, 8, 1, 2, 3, 4, 9, 5, 10, 6, 7];
+    this.crc_extra = 117;
+    this.name = 'GENERATOR_STATUS';
+
+    this.fieldnames = ['status', 'generator_speed', 'battery_current', 'load_current', 'power_generated', 'bus_voltage', 'rectifier_temperature', 'bat_current_setpoint', 'generator_temperature', 'runtime', 'time_until_maintenance'];
+
+
+    this.set(arguments);
+
+}
+        
+mavlink.messages.generator_status.prototype = new mavlink.message;
+
+mavlink.messages.generator_status.prototype.pack = function(mav) {
+    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.status, this.battery_current, this.load_current, this.power_generated, this.bus_voltage, this.bat_current_setpoint, this.runtime, this.time_until_maintenance, this.generator_speed, this.rectifier_temperature, this.generator_temperature]));
+}
+
+/* 
 The raw values of the actuator outputs (e.g. on Pixhawk, from MAIN,
 AUX ports). This message supersedes SERVO_OUTPUT_RAW.
 
@@ -10179,13 +10271,14 @@ mavlink.map = {
         162: { format: '<IHBBB', type: mavlink.messages.fence_status, order_map: [2, 1, 3, 0, 4], crc_extra: 189 },
         180: { format: '<QH', type: mavlink.messages.terrain_sensor, order_map: [0, 1], crc_extra: 96 },
         181: { format: '<QHHHBBBB', type: mavlink.messages.distance_sensor_synced, order_map: [0, 1, 2, 3, 4, 5, 6, 7], crc_extra: 59 },
+        192: { format: '<ffffffffffBBBBfBBf', type: mavlink.messages.mag_cal_report, order_map: [10, 11, 12, 13, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17], crc_extra: 36 },
         219: { format: '<QIIIiiii4fBbB', type: mavlink.messages.camera_image_captured_data, order_map: [1, 2, 0, 9, 3, 4, 5, 6, 7, 8, 10, 11], crc_extra: 70 },
         220: { format: '<4i4h4h4h4h4H4HBB', type: mavlink.messages.motor_actuator_data, order_map: [7, 8, 0, 1, 2, 3, 4, 5, 6], crc_extra: 3 },
         221: { format: '<IIBB240s', type: mavlink.messages.data_data, order_map: [2, 0, 1, 3, 4], crc_extra: 73 },
         222: { format: '<IIIBBB', type: mavlink.messages.data_fetch, order_map: [3, 4, 5, 0, 1, 2], crc_extra: 29 },
         223: { format: '<IBBB', type: mavlink.messages.data_available, order_map: [1, 2, 3, 0], crc_extra: 185 },
         224: { format: '<IIBBB', type: mavlink.messages.data_list, order_map: [2, 3, 4, 0, 1], crc_extra: 121 },
-        225: { format: '<QIIiiii4fBb', type: mavlink.messages.camera_image_captured_v1, order_map: [1, 0, 8, 2, 3, 4, 5, 6, 7, 9], crc_extra: 214 },
+        225: { format: '<ffffffffffffffffB', type: mavlink.messages.efi_status, order_map: [16, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], crc_extra: 208 },
         226: { format: '<IIHHHHB', type: mavlink.messages.extended_log_entry, order_map: [2, 3, 4, 0, 1, 6, 5], crc_extra: 141 },
         227: { format: '<2iIII2hHhhBB', type: mavlink.messages.extended_hud, order_map: [4, 0, 1, 2, 5, 3, 6, 7, 8, 9], crc_extra: 77 },
         228: { format: '<IHBBB', type: mavlink.messages.mission_check, order_map: [2, 3, 1, 0, 4], crc_extra: 205 },
@@ -10253,6 +10346,7 @@ mavlink.map = {
         360: { format: '<QfiifB', type: mavlink.messages.orbit_execution_status, order_map: [0, 1, 5, 2, 3, 4], crc_extra: 11 },
         370: { format: '<iiiHHHHHB50s', type: mavlink.messages.smart_battery_info, order_map: [8, 0, 1, 3, 2, 9, 4, 5, 6, 7], crc_extra: 98 },
         371: { format: '<iiHhhhH16H', type: mavlink.messages.smart_battery_status, order_map: [2, 3, 4, 5, 0, 1, 6, 7], crc_extra: 161 },
+        373: { format: '<QfffffIiHhh', type: mavlink.messages.generator_status, order_map: [0, 8, 1, 2, 3, 4, 9, 5, 10, 6, 7], crc_extra: 117 },
         375: { format: '<QI32f', type: mavlink.messages.actuator_output_status, order_map: [0, 1, 2], crc_extra: 251 },
         380: { format: '<iiiii', type: mavlink.messages.time_estimate_to_target, order_map: [0, 1, 2, 3, 4], crc_extra: 232 },
         385: { format: '<HBBB128s', type: mavlink.messages.tunnel, order_map: [1, 2, 0, 3, 4], crc_extra: 147 },
