@@ -10686,21 +10686,14 @@ MAVLinkProcessor.prototype.decode = function(msgbuf) {
     }
 
     // Decode the payload and reorder the fields to match the order map.
+    // We have to ignore if we have less data than the format string suggests to unpack messages
+    // with v2 extension fields that are not filled (v1 messages, or old v2 messages where extensions
+    // have been added).
     try {
-        if (this.current_version == 2) {
-            var t = jspack.Unpack(decoder.format, payload, true);
-        }
-        else {
-            var t = jspack.Unpack(decoder.format, payload);
-        }
+        var t = jspack.Unpack(decoder.format, payload, true);
     }
     catch (e) {
-        if (this.current_version == 2) {
-            throw new Error('Unable to unpack MAVLink payload type='+decoder.type+' format='+decoder.format+' payloadLength='+ payload +': '+ e.message);
-        }
-        else {
-            throw new Error('Unable to unpack MAVLink payload type='+decoder.type+' format='+decoder.format+' payloadLength='+ payload +': '+ e.message);
-        }
+        throw new Error('Unable to unpack MAVLink payload type='+decoder.type+' format='+decoder.format+' payloadLength='+ payload +': '+ e.message);
     }
 
     // Reorder the fields to match the order map
