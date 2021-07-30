@@ -5,7 +5,6 @@
   "main": "mavlink-lib.js",
   "private": true,
   "scripts": {
-    "prepare": "./mavlink-patch.sh",
     "pretest": "./mavlink-patch.sh",
     "test": "mocha test"
   },
