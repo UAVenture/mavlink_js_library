@@ -2,10 +2,10 @@
   "name": "mavlink-js",
   "version": "1.0.0",
   "description": "MAVLink v2 JS Library",
-  "main": "mavlink-lib.js",
+  "main": "src/lib/mavlink-lib.js",
   "private": true,
   "scripts": {
-    "pretest": "./mavlink-patch.sh",
+    "pretest": "src/mavlink/mavlink-patch.sh",
     "test": "mocha test"
   },
   "author": "",
@@ -13,9 +13,10 @@
   "dependencies": {
     "jspack": "github:AndreasAntener/node-jspack#master",
     "long": "^4.0.0",
-    "underscore": "^1.9.2",
     "mocha": "",
-    "should": ""
+    "serialport": "^9.2.1",
+    "should": "",
+    "underscore": "^1.13.1"
   },
   "devDependencies": {
     "should-sinon": "0.0.6",

@@ -1,8 +1,13 @@
 'use strict';
-require('./mavlink.patched.js');
 var events = require("events");
 var util = require("util");
 var Long = require('long');
+
+require('../mavlink/mavlink.patched.js');
+var MavlinkSystemBroker = require('./mavlink-broker.js').MavlinkSystemBroker;
+var SerialConnection = require('../helpers/serial-connection.js').SerialConnection;
+var UdpConnection = require('../helpers/udp-connection.js').UdpConnection;
+var LoggingFactory = require('../lib/logging-base.js').LoggingFactory;
 
 var MavlinkLib = function(srcSystem, srcComponent, sendDataCallback, protocolVersion = 0) {
 	var self = this;
@@ -18,6 +23,8 @@ var MavlinkLib = function(srcSystem, srcComponent, sendDataCallback, protocolVer
     }
 
     self.mavlinkProcessor = new MAVLinkProcessor(null, srcSystem, srcComponent);
+
+    self.sendDataCallback = sendDataCallback;
 
     // set "file" for mavlink to write to
     self.mavlinkProcessor.file = {
@@ -48,6 +55,12 @@ MavlinkLib.prototype.sendMessage = function(msg){
 	var self = this;
 
     self.mavlinkProcessor.send(msg);
+};
+
+MavlinkLib.prototype.sendRawData = function(data){
+    var self = this;
+
+    self.sendDataCallback(data);
 };
 
 MavlinkLib.prototype.createFloatParamValue = function(value) {
@@ -120,3 +133,7 @@ MavlinkLib.prototype.readParamValue = function(msg) {
 module.exports.messages = mavlink.messages;
 module.exports.MavlinkLib = MavlinkLib;
 module.exports.mavlink = mavlink;
+module.exports.MavlinkSystemBroker = MavlinkSystemBroker;
+module.exports.SerialConnection = SerialConnection;
+module.exports.UdpConnection = UdpConnection;
+module.exports.LoggingFactory = LoggingFactory;

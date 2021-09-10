@@ -2,6 +2,8 @@
 
 set -e
 
+cd "$(dirname "$0")"
+
 # Rename the message prototype id field because some messages are using it as a payload field.
 # Affects all messages and should therefore be done with sed.
 # Following patches depend on this change.

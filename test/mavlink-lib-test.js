@@ -2,7 +2,7 @@ var should = require('should');
 var sinon = require('sinon');
 require('should-sinon');
 
-var lib = require('../mavlink-lib.js');
+var lib = require('../src/lib/mavlink-lib.js');
 
 describe('Test module exports:', function () {
 
@@ -66,6 +66,30 @@ describe('Test message handling:', function () {
     msg[0].throttle.should.be.eql(68);
     msg[0].alt.should.be.eql(465.12353515625);
     msg[0].climb.should.be.eql(1.2312480211257935);
+  });
+
+  it('parse bad data', function () {
+    var callback = sinon.spy();
+    var a = new lib.MavlinkLib(255, 0, callback, 2);
+
+    var msg = a.parseData(Buffer.from("fd13000000ff004a00005892c24103fdd841d08fe84389999d3f2d0044aef5", 'hex'));
+    console.log(msg);
+
+    // incomplete
+    var msg = a.parseData(Buffer.from("fd130000005892c24103fdd841d08fe84389999d3f2d004472e8", 'hex'));
+    console.log(msg);
+
+    // valid but unknown
+    var msg = a.parseData(Buffer.from("fd13000000ff00d204005892c24103fdd841d08fe84389999d3f2d00444a22", 'hex'));
+    console.log(msg);
+
+    // valid but unknown
+    var msg = a.parseData(Buffer.from("fd13000000ff00d204005892c24103fdd841d08fe84389999d3f2d00444a22", 'hex'));
+    console.log(msg);
+
+    // valid but unknown
+    var msg = a.parseData(Buffer.from("fd13000000ff004a00005892c24103fdd841d08fe84389999d3f2d0044aef5", 'hex'));
+    console.log(msg);
   });
 });
 
