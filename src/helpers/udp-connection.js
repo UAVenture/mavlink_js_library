@@ -12,8 +12,8 @@ var UdpConnection = function(localAddr, localPort = 14570, remoteHost, remotePor
     self.config = {
         localPort: localPort,
         localAddr: localAddr,
-        remotePort: remoteHost,
-        remoteAddr: remotePort
+        remotePort: remotePort,
+        remoteAddr: remoteHost
     };
 
     self.socket = dgram.createSocket('udp4');
