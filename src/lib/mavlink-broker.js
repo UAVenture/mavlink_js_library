@@ -6,7 +6,7 @@ var mavjs = require('./mavlink-lib.js');
 var mavsys = require('./mavlink-system.js');
 var loggingBase = require('../lib/logging-base.js')
 
-var MavlinkSystemBroker = function(connection, srcId = 255, srcComp = 0) {
+var MavlinkSystemBroker = function(connection, srcId = 255, srcComp = 0, mavlinkVersion = 0) {
 	let self = this;
 
     self.logger = new loggingBase.LoggingFactory().getLogger();
@@ -17,7 +17,7 @@ var MavlinkSystemBroker = function(connection, srcId = 255, srcComp = 0) {
 
     self.mavlib = new mavjs.MavlinkLib(srcId, srcComp, (data) => {
         self.connection.send(data);
-    });
+    }, mavlinkVersion);
 
     // Forward data for parsing when it comes in:
     self.connection.on('data', (data) => {
