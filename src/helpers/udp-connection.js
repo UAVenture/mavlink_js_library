@@ -4,7 +4,7 @@ var util = require("util");
 var dgram = require('dgram');
 var loggingBase = require('../lib/logging-base.js')
 
-var UdpConnection = function(localAddr, localPort) {
+var UdpConnection = function(localAddr, localPort, client) {
     var self = this;
 
     self.logger = new loggingBase.LoggingFactory().getLogger();
@@ -18,9 +18,15 @@ var UdpConnection = function(localAddr, localPort) {
 
     self.socket = dgram.createSocket('udp4');
 
-    self.socket.bind(self.config.localPort, function(){
-        self.logger.info(util.format("Bound local interface %s:%s", self.config.localAddr, self.config.localPort));
-    });
+    if (!client) {
+        self.socket.bind(self.config.localPort, function(){
+            self.logger.info(util.format("Bound local interface %s:%s", self.config.localAddr, self.config.localPort));
+        });
+
+    } else {
+        self.config.remotePort = localPort;
+        self.config.remoteAddr = localAddr;
+    }
 
     self.socket.on("message", function(data, remote){
         self.emit("data", data);
@@ -34,8 +40,6 @@ var UdpConnection = function(localAddr, localPort) {
     });
 }
 
-util.inherits(UdpConnection, events.EventEmitter);
-
 UdpConnection.prototype.send = function(buffer){
     var self = this;
 
@@ -44,5 +48,7 @@ UdpConnection.prototype.send = function(buffer){
             , self.config.remotePort, self.config.remoteAddr);
     }
 };
+
+util.inherits(UdpConnection, events.EventEmitter);
 
 module.exports.UdpConnection = UdpConnection;
