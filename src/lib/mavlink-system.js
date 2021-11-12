@@ -88,7 +88,7 @@ MavlinkSystem.prototype.connectionCheck = function(msg) {
     let self = this;
     let now = Date.now();
 
-    if (now > self.info.comms.lastHeartbeat + 10e6 && self.info.comms.connected) {
+    if (now > self.info.comms.lastHeartbeat + 10e3 && self.info.comms.connected) {
         self.info.comms.connected = false;
         self.logger.warn(`System ${self.sysId} lost connection`);
 
