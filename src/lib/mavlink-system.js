@@ -48,16 +48,16 @@ var MavlinkSystem = function(sysId, mavlib) {
             valid: false,
             lat: undefined,
             lon: undefined,
-            alt: undefined,
-            hdg: undefined,
+            alt: undefined
         },
         hud: {
+            hdg: undefined,
             airspeed: 0.0,
             groundspeed: 0.0,
             landedState: "unknown",
             flightMode: "unknown",
             armedState: "unknown",
-            safetyState: "unknown",
+            safetyState: "unknown"
         },
         comms: {
             connected: false,
@@ -65,7 +65,7 @@ var MavlinkSystem = function(sysId, mavlib) {
         }
     };
 
-    setTimeout(() => {
+    setInterval(() => {
         self.connectionCheck();
     }, 333);
 }
@@ -172,6 +172,10 @@ MavlinkSystem.prototype.updateData = function(msg) {
             statusChanged = true;
         }
 
+        if (!self.info.comms.connected) {
+            self.logger.warn(`System ${self.sysId} connected`);
+        }
+
         self.info.comms.lastHeartbeat = now;
         self.info.comms.connected = true;
     }
@@ -194,7 +198,7 @@ MavlinkSystem.prototype.updateData = function(msg) {
         self.info.position.lat = msg.lat / 1e7;
         self.info.position.lon = msg.lon / 1e7;
         self.info.position.alt = msg.alt / 1e3;
-        self.info.position.hdg = msg.hdg / 1e2;
+        self.info.hud.hdg = msg.hdg / 1e2;
         self.info.position.valid = true;
     }
 
