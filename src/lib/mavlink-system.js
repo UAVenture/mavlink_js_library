@@ -54,6 +54,8 @@ var MavlinkSystem = function(sysId, mavlib) {
             hdg: undefined,
             airspeed: 0.0,
             groundspeed: 0.0,
+            roll: 0.0,
+            pitch: 0.0,
             landedState: "unknown",
             flightMode: "unknown",
             armedState: "unknown",
@@ -205,6 +207,12 @@ MavlinkSystem.prototype.updateData = function(msg) {
     if (msg.header.msgId === lib.mavlink.MAVLINK_MSG_ID_VFR_HUD) {
         self.info.hud.groundspeed = msg.groundspeed * 3.6;
         self.info.hud.airspeed = msg.airspeed * 3.6;
+    }
+
+    if (msg.header.msgId === lib.mavlink.MAVLINK_MSG_ID_ATTITUDE) {
+        self.info.hud.roll = msg.roll * (180.0 / Math.PI);
+        self.info.hud.pitch = msg.pitch * (180.0 / Math.PI);
+        self.info.hud.hdg = msg.yaw * (180.0 / Math.PI);
     }
 
     if (statusChanged) {
