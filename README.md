@@ -68,7 +68,7 @@ var msg = mavlib.createParamSetMessage("MAV_HUD_FREQ", 5.354, true);
 ```
 # Generate from definitions:
 cd mavlink
-./pymavlink/tools/mavgen.py --lang JavaScript --wire-protocol 2.0 -o ../mavlink_js_library_v2_private/src/mavlink/mavlink.js message_definitions/v1.0/common.xml
+./pymavlink/tools/mavgen.py --lang JavaScript_Stable --wire-protocol 2.0 -o ../mavlink_js_library_v2_private/src/mavlink/mavlink.js message_definitions/v1.0/standard.xml
 cd ../mavlink_js_library_v2_private
 
 # Execute patch script and run tests:
