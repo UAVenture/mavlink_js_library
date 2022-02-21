@@ -2893,6 +2893,7 @@ mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_OPERATOR_ID = 12905
 mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_MESSAGE_PACK = 12915
 mavlink.MAVLINK_MSG_ID_CROP_SPRAYING_STATUS = 40100
 mavlink.MAVLINK_MSG_ID_GPS_DEVICE_INFO = 40200
+mavlink.MAVLINK_MSG_ID_HIL_SENSOR_INJECTION = 40300
 mavlink.MAVLINK_MSG_ID_HEARTBEAT = 0
 mavlink.MAVLINK_MSG_ID_PROTOCOL_VERSION = 300
 
@@ -11105,6 +11106,55 @@ mavlink.messages.gps_device_info.prototype.pack = function(mav) {
 }
 
 /* 
+Message uesd to inject sensor data for HIL testing.
+
+                time_usec                 : Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number. (uint64_t)
+                valid                     : Bit field specifying which sensors are updated (uint8_t)
+                sensor_id                 : For which sensor (typically 0 to 3) this data should be applied. Set to UINT8_MAX to apply the same data for all sensors. (uint8_t)
+                accel_x                   : Accel X polynominal (float)
+                accel_y                   : Accel Y polynominal (float)
+                accel_z                   : Accel Z polynominal (float)
+                gyro_x                    : Gyro X polynominal (float)
+                gyro_y                    : Gyro Y polynominal (float)
+                gyro_z                    : Gyro Z polynominal (float)
+                mag_x                     : Mag X polynominal (float)
+                mag_y                     : Mag Y polynominal (float)
+                mag_z                     : Mag Z polynominal (float)
+                imu_temp                  : IMU temp polynominal (float)
+                diff_pressure             : Differential pressure polynominal (float)
+                diff_air_temp             : Air temperature polynominal from differential pressure sensors (float)
+                abs_pressure              : Absolute pressure polynominal (float)
+                abs_air_temp              : Air temperature polynominal from baro (float)
+                gps_lat                   : GPS latitude polynominal (float)
+                gps_lon                   : GPS longitude polynominal (float)
+                gps_alt                   : GPS altitude polynominal (float)
+                gps_vn                    : GPS velocity north polynominal (float)
+                gps_ve                    : GPS velocity east polynominal (float)
+                gps_vd                    : GPS velocity down polynominal (float)
+
+*/
+mavlink.messages.hil_sensor_injection = function(time_usec, valid, sensor_id, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, mag_x, mag_y, mag_z, imu_temp, diff_pressure, diff_air_temp, abs_pressure, abs_air_temp, gps_lat, gps_lon, gps_alt, gps_vn, gps_ve, gps_vd) {
+
+    this.format = '<Q3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3fBB';
+    this.id = mavlink.MAVLINK_MSG_ID_HIL_SENSOR_INJECTION;
+    this.order_map = [0, 21, 22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+    this.crc_extra = 125;
+    this.name = 'HIL_SENSOR_INJECTION';
+
+    this.fieldnames = ['time_usec', 'valid', 'sensor_id', 'accel_x', 'accel_y', 'accel_z', 'gyro_x', 'gyro_y', 'gyro_z', 'mag_x', 'mag_y', 'mag_z', 'imu_temp', 'diff_pressure', 'diff_air_temp', 'abs_pressure', 'abs_air_temp', 'gps_lat', 'gps_lon', 'gps_alt', 'gps_vn', 'gps_ve', 'gps_vd'];
+
+
+    this.set(arguments);
+
+}
+        
+mavlink.messages.hil_sensor_injection.prototype = new mavlink.message;
+
+mavlink.messages.hil_sensor_injection.prototype.pack = function(mav) {
+    return mavlink.message.prototype.pack.call(this, mav, this.crc_extra, jspack.Pack(this.format, [ this.time_usec, this.accel_x, this.accel_y, this.accel_z, this.gyro_x, this.gyro_y, this.gyro_z, this.mag_x, this.mag_y, this.mag_z, this.imu_temp, this.diff_pressure, this.diff_air_temp, this.abs_pressure, this.abs_air_temp, this.gps_lat, this.gps_lon, this.gps_alt, this.gps_vn, this.gps_ve, this.gps_vd, this.valid, this.sensor_id]));
+}
+
+/* 
 The heartbeat message shows that a system or component is present and
 responding. The type and autopilot fields (along with the message
 component id), allow the receiving system to treat further messages
@@ -11410,6 +11460,7 @@ mavlink.map = {
         12915: { format: '<BBBB250s', type: mavlink.messages.open_drone_id_message_pack, order_map: [0, 1, 2, 3, 4], crc_extra: 62 },
         40100: { format: '<fiiiiB', type: mavlink.messages.crop_spraying_status, order_map: [5, 0, 1, 2, 3, 4], crc_extra: 49 },
         40200: { format: '<HB250s', type: mavlink.messages.gps_device_info, order_map: [0, 1, 2], crc_extra: 234 },
+        40300: { format: '<Q3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3fBB', type: mavlink.messages.hil_sensor_injection, order_map: [0, 21, 22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], crc_extra: 125 },
         0: { format: '<IBBBBB', type: mavlink.messages.heartbeat, order_map: [1, 2, 3, 0, 4, 5], crc_extra: 50 },
         300: { format: '<HHH8s8s', type: mavlink.messages.protocol_version, order_map: [0, 1, 2, 3, 4], crc_extra: 217 },
 }
