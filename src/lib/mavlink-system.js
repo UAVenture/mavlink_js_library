@@ -67,6 +67,8 @@ var MavlinkSystem = function(sysId, mavlib) {
         }
     };
 
+    self.logFetcher = undefined;
+
     setInterval(() => {
         self.connectionCheck();
     }, 333);
@@ -219,9 +221,21 @@ MavlinkSystem.prototype.updateData = function(msg) {
         self.emit('statusUpdate');
     }
 
+    if (self.logFetcher) {
+        self.logFetcher.onMessage(msg);
+    }
+
     // Provide the same message events as mavlink and MavlinkLib
     self.emit('message', msg);
     self.emit(msg.name, msg);
+}
+
+MavlinkSystem.prototype.getLogFetcher = function(logPath) {
+    let self = this;
+
+    self.logFetcher = new lib.MavlinkLogFetcher(self.mavlib, logPath);
+
+    return self.logFetcher;
 }
 
 module.exports.MavlinkSystem = MavlinkSystem;
