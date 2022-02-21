@@ -7,7 +7,9 @@ require('../mavlink/mavlink.patched.js');
 var MavlinkSystemBroker = require('./mavlink-broker.js').MavlinkSystemBroker;
 var SerialConnection = require('../helpers/serial-connection.js').SerialConnection;
 var UdpConnection = require('../helpers/udp-connection.js').UdpConnection;
+var TcpConnection = require('../helpers/tcp-connection.js').TcpConnection;
 var LoggingFactory = require('../lib/logging-base.js').LoggingFactory;
+var MavlinkLogFetcher = require('./mavlink-log-fetcher.js').MavlinkLogFetcher;
 
 var MavlinkLib = function(srcSystem, srcComponent, sendDataCallback, protocolVersion = 0) {
 	var self = this;
@@ -136,4 +138,6 @@ module.exports.mavlink = mavlink;
 module.exports.MavlinkSystemBroker = MavlinkSystemBroker;
 module.exports.SerialConnection = SerialConnection;
 module.exports.UdpConnection = UdpConnection;
+module.exports.TcpConnection = TcpConnection;
 module.exports.LoggingFactory = LoggingFactory;
+module.exports.MavlinkLogFetcher = MavlinkLogFetcher;
