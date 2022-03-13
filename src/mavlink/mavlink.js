@@ -614,7 +614,12 @@ mavlink.MAV_SYS_STATUS_E1_STORAGE = 16 // 0x10 Onboard storage health
 mavlink.MAV_SYS_STATUS_E1_BGPS = 32 // 0x20 Blended GPS health
 mavlink.MAV_SYS_STATUS_E1_COMPANION = 64 // 0x40 Companion computer operational
 mavlink.MAV_SYS_STATUS_E1_ADSB = 128 // 0x80 ADSB transponder operational
-mavlink.MAV_SYS_STATUS_SENSOR_E1_ENUM_END = 129 // 
+mavlink.MAV_SYS_STATUS_E1_GENERATOR = 256 // 0x100 Power generator health
+mavlink.MAV_SYS_STATUS_E1_RC_CALIBRATION = 512 // 0x200 RC calibration validity
+mavlink.MAV_SYS_STATUS_E1_RC_PREC_LAND = 1024 // 0x400 Precision landing system
+mavlink.MAV_SYS_STATUS_E1_RC_NTRIP = 2048 // 0x800 NTRIP module
+mavlink.MAV_SYS_STATUS_E1_BATTERY2 = 4096 // 0x1000 Battery 2
+mavlink.MAV_SYS_STATUS_SENSOR_E1_ENUM_END = 4097 // 
 
 // MAV_FAILURE
 mavlink.MAV_FAILURE_FW_ENGINE = 1 // Loss of fixed-wing thrust
@@ -624,8 +629,8 @@ mavlink.MAV_FAILURE_GPOS = 8 // Global position not available
 mavlink.MAV_FAILURE_ALTITUDE = 16 // Unexpected loss of altitude
 mavlink.MAV_FAILURE_MIN_ALTITUDE = 32 // Minimum altitude violation
 mavlink.MAV_FAILURE_AIRSPEED = 64 // Airspeed not available
-mavlink.MAV_FAILURE_BATTERY_LOW = 128 // Airspeed not available
-mavlink.MAV_FAILURE_BATTERY_CRITICAL = 256 // Airspeed not available
+mavlink.MAV_FAILURE_BATTERY_LOW = 128 // Battery 1 low
+mavlink.MAV_FAILURE_BATTERY_CRITICAL = 256 // Battery 1 critical
 mavlink.MAV_FAILURE_TERRAIN = 512 // Terrain estimate not available
 mavlink.MAV_FAILURE_MANUAL_CONTROL = 1024 // Manual control not available
 mavlink.MAV_FAILURE_DATA_LINK = 2048 // Data link not available
@@ -633,7 +638,9 @@ mavlink.MAV_FAILURE_VOTED_SENSOR = 4096 // A voted sensor failure has been detec
                         // dpres)
 mavlink.MAV_FAILURE_MISSION_INVALID = 8192 // The currently uloaded mission failed feasibility checks
 mavlink.MAV_FAILURE_GEOFENCE = 16384 // Vehicle is in geofence violation
-mavlink.MAV_FAILURE_ENUM_END = 16385 // 
+mavlink.MAV_FAILURE_BATTERY2_LOW = 32768 // Battery 2 low
+mavlink.MAV_FAILURE_BATTERY2_CRITICAL = 65536 // Battery 2 critical
+mavlink.MAV_FAILURE_ENUM_END = 65537 // 
 
 // MAV_CONTROL_MODE
 mavlink.MAV_CONTROL_MODE_PREFLIGHT = 1 // Pre-flight check control mode
@@ -1598,6 +1605,41 @@ mavlink.MAV_SMART_BATTERY_FAULT_OVER_CURRENT = 8 // Over-current fault.
 mavlink.MAV_SMART_BATTERY_FAULT_OVER_TEMPERATURE = 16 // Over-temperature fault.
 mavlink.MAV_SMART_BATTERY_FAULT_UNDER_TEMPERATURE = 32 // Under-temperature fault.
 mavlink.MAV_SMART_BATTERY_FAULT_ENUM_END = 33 // 
+
+// MAV_GENERATOR_STATUS_FLAG
+mavlink.MAV_GENERATOR_STATUS_FLAG_OFF = 1 // Generator is off.
+mavlink.MAV_GENERATOR_STATUS_FLAG_READY = 2 // Generator is ready to start generating power.
+mavlink.MAV_GENERATOR_STATUS_FLAG_GENERATING = 4 // Generator is generating power.
+mavlink.MAV_GENERATOR_STATUS_FLAG_CHARGING = 8 // Generator is charging the batteries (generating enough power to charge
+                        // and provide the load).
+mavlink.MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER = 16 // Generator is operating at a reduced maximum power.
+mavlink.MAV_GENERATOR_STATUS_FLAG_MAXPOWER = 32 // Generator is providing the maximum output.
+mavlink.MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING = 64 // Generator is near the maximum operating temperature, cooling is
+                        // insufficient.
+mavlink.MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT = 128 // Generator hit the maximum operating temperature and shutdown.
+mavlink.MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING = 256 // Power electronics are near the maximum operating temperature, cooling
+                        // is insufficient.
+mavlink.MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT = 512 // Power electronics hit the maximum operating temperature and shutdown.
+mavlink.MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT = 1024 // Power electronics experienced a fault and shutdown.
+mavlink.MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT = 2048 // The power source supplying the generator failed e.g. mechanical
+                        // generator stopped, tether is no longer
+                        // providing power, solar cell is in shade,
+                        // hydrogen reaction no longer happening.
+mavlink.MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING = 4096 // Generator controller having communication problems.
+mavlink.MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING = 8192 // Power electronic or generator cooling system error.
+mavlink.MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT = 16384 // Generator controller power rail experienced a fault.
+mavlink.MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT = 32768 // Generator controller exceeded the overcurrent threshold and shutdown
+                        // to prevent damage.
+mavlink.MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT = 65536 // Generator controller detected a high current going into the batteries
+                        // and shutdown to prevent battery damage.
+mavlink.MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT = 131072 // Generator controller exceeded it's overvoltage threshold and shutdown
+                        // to prevent it exceeding the voltage rating.
+mavlink.MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT = 262144 // Batteries are under voltage (generator will not start).
+mavlink.MAV_GENERATOR_STATUS_FLAG_START_INHIBITED = 524288 // Generator start is inhibited by e.g. a safety switch.
+mavlink.MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED = 1048576 // Generator requires maintenance.
+mavlink.MAV_GENERATOR_STATUS_FLAG_WARMING_UP = 2097152 // Generator is not ready to generate yet.
+mavlink.MAV_GENERATOR_STATUS_FLAG_IDLE = 4194304 // Generator is idle.
+mavlink.MAV_GENERATOR_STATUS_FLAG_ENUM_END = 4194305 // 
 
 // MAV_VTOL_STATE
 mavlink.MAV_VTOL_STATE_UNDEFINED = 0 // MAV is not configured as VTOL
