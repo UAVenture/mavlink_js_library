@@ -239,7 +239,9 @@ mavlink.MAV_FAILURE_MISSION_INVALID = 8192 // The currently uloaded mission fail
 mavlink.MAV_FAILURE_GEOFENCE = 16384 // Vehicle is in geofence violation
 mavlink.MAV_FAILURE_BATTERY2_LOW = 32768 // Battery 2 low
 mavlink.MAV_FAILURE_BATTERY2_CRITICAL = 65536 // Battery 2 critical
-mavlink.MAV_FAILURE_ENUM_END = 65537 // 
+mavlink.FAILURE_STATUS_CORRUPT = 131072 // Status storage is corrupted. Most likely a CRC check failed while
+                        // loading data.
+mavlink.MAV_FAILURE_ENUM_END = 131073 // 
 
 // MAV_CONTROL_MODE
 mavlink.MAV_CONTROL_MODE_PREFLIGHT = 1 // Pre-flight check control mode
@@ -639,10 +641,7 @@ mavlink.MAV_CMD_NAV_ROI = 80 // Sets the region of interest (ROI) for a sensor s
 mavlink.MAV_CMD_NAV_PATHPLANNING = 81 // Control autonomous path planning on the MAV.
 mavlink.MAV_CMD_NAV_SPLINE_WAYPOINT = 82 // Navigate to waypoint using a spline path.
 mavlink.MAV_CMD_NAV_VTOL_TAKEOFF = 84 // Takeoff from ground using VTOL mode, and transition to forward flight
-                        // with specified heading. The command should
-                        // be ignored by vehicles that dont support
-                        // both VTOL and fixed-wing flight
-                        // (multicopters, boats,etc.).
+                        // with specified heading.
 mavlink.MAV_CMD_NAV_VTOL_LAND = 85 // Land using VTOL mode
 mavlink.MAV_CMD_NAV_GUIDED_ENABLE = 92 // hand control over to an external controller
 mavlink.MAV_CMD_NAV_DELAY = 93 // Delay the next navigation command a number of seconds or until a
@@ -1409,41 +1408,6 @@ mavlink.MAV_GENERATOR_STATUS_FLAG_WARMING_UP = 2097152 // Generator is not ready
 mavlink.MAV_GENERATOR_STATUS_FLAG_IDLE = 4194304 // Generator is idle.
 mavlink.MAV_GENERATOR_STATUS_FLAG_ENUM_END = 4194305 // 
 
-// MAV_GENERATOR_STATUS_FLAG
-mavlink.MAV_GENERATOR_STATUS_FLAG_OFF = 1 // Generator is off.
-mavlink.MAV_GENERATOR_STATUS_FLAG_READY = 2 // Generator is ready to start generating power.
-mavlink.MAV_GENERATOR_STATUS_FLAG_GENERATING = 4 // Generator is generating power.
-mavlink.MAV_GENERATOR_STATUS_FLAG_CHARGING = 8 // Generator is charging the batteries (generating enough power to charge
-                        // and provide the load).
-mavlink.MAV_GENERATOR_STATUS_FLAG_REDUCED_POWER = 16 // Generator is operating at a reduced maximum power.
-mavlink.MAV_GENERATOR_STATUS_FLAG_MAXPOWER = 32 // Generator is providing the maximum output.
-mavlink.MAV_GENERATOR_STATUS_FLAG_OVERTEMP_WARNING = 64 // Generator is near the maximum operating temperature, cooling is
-                        // insufficient.
-mavlink.MAV_GENERATOR_STATUS_FLAG_OVERTEMP_FAULT = 128 // Generator hit the maximum operating temperature and shutdown.
-mavlink.MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_WARNING = 256 // Power electronics are near the maximum operating temperature, cooling
-                        // is insufficient.
-mavlink.MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_OVERTEMP_FAULT = 512 // Power electronics hit the maximum operating temperature and shutdown.
-mavlink.MAV_GENERATOR_STATUS_FLAG_ELECTRONICS_FAULT = 1024 // Power electronics experienced a fault and shutdown.
-mavlink.MAV_GENERATOR_STATUS_FLAG_POWERSOURCE_FAULT = 2048 // The power source supplying the generator failed e.g. mechanical
-                        // generator stopped, tether is no longer
-                        // providing power, solar cell is in shade,
-                        // hydrogen reaction no longer happening.
-mavlink.MAV_GENERATOR_STATUS_FLAG_COMMUNICATION_WARNING = 4096 // Generator controller having communication problems.
-mavlink.MAV_GENERATOR_STATUS_FLAG_COOLING_WARNING = 8192 // Power electronic or generator cooling system error.
-mavlink.MAV_GENERATOR_STATUS_FLAG_POWER_RAIL_FAULT = 16384 // Generator controller power rail experienced a fault.
-mavlink.MAV_GENERATOR_STATUS_FLAG_OVERCURRENT_FAULT = 32768 // Generator controller exceeded the overcurrent threshold and shutdown
-                        // to prevent damage.
-mavlink.MAV_GENERATOR_STATUS_FLAG_BATTERY_OVERCHARGE_CURRENT_FAULT = 65536 // Generator controller detected a high current going into the batteries
-                        // and shutdown to prevent battery damage.
-mavlink.MAV_GENERATOR_STATUS_FLAG_OVERVOLTAGE_FAULT = 131072 // Generator controller exceeded it's overvoltage threshold and shutdown
-                        // to prevent it exceeding the voltage rating.
-mavlink.MAV_GENERATOR_STATUS_FLAG_BATTERY_UNDERVOLT_FAULT = 262144 // Batteries are under voltage (generator will not start).
-mavlink.MAV_GENERATOR_STATUS_FLAG_START_INHIBITED = 524288 // Generator start is inhibited by e.g. a safety switch.
-mavlink.MAV_GENERATOR_STATUS_FLAG_MAINTENANCE_REQUIRED = 1048576 // Generator requires maintenance.
-mavlink.MAV_GENERATOR_STATUS_FLAG_WARMING_UP = 2097152 // Generator is not ready to generate yet.
-mavlink.MAV_GENERATOR_STATUS_FLAG_IDLE = 4194304 // Generator is idle.
-mavlink.MAV_GENERATOR_STATUS_FLAG_ENUM_END = 4194305 // 
-
 // MAV_VTOL_STATE
 mavlink.MAV_VTOL_STATE_UNDEFINED = 0 // MAV is not configured as VTOL
 mavlink.MAV_VTOL_STATE_TRANSITION_TO_FW = 1 // VTOL is in transition from multicopter to fixed-wing
@@ -1595,16 +1559,6 @@ mavlink.LANDING_TARGET_TYPE_VISION_FIDUCIAL = 2 // Landing target represented by
 mavlink.LANDING_TARGET_TYPE_VISION_OTHER = 3 // Landing target represented by a pre-defined visual shape/feature (ex:
                         // X-marker, H-marker, square)
 mavlink.LANDING_TARGET_TYPE_ENUM_END = 4 // 
-
-// VTOL_TRANSITION_HEADING
-mavlink.VTOL_TRANSITION_HEADING_VEHICLE_DEFAULT = 0 // Respect the heading configuration of the vehicle.
-mavlink.VTOL_TRANSITION_HEADING_NEXT_WAYPOINT = 1 // Use the heading pointing towards the next waypoint.
-mavlink.VTOL_TRANSITION_HEADING_TAKEOFF = 2 // Use the heading on takeoff (while sitting on the ground).
-mavlink.VTOL_TRANSITION_HEADING_SPECIFIED = 3 // Use the specified heading in parameter 4.
-mavlink.VTOL_TRANSITION_HEADING_ANY = 4 // Use the current heading when reaching takeoff altitude (potentially
-                        // facing the wind when weather-vaning is
-                        // active).
-mavlink.VTOL_TRANSITION_HEADING_ENUM_END = 5 // 
 
 // CAMERA_CAP_FLAGS
 mavlink.CAMERA_CAP_FLAGS_CAPTURE_VIDEO = 1 // Camera is able to record video
@@ -1816,7 +1770,10 @@ mavlink.PRECISION_LAND_MODE_OPPORTUNISTIC = 1 // Use precision landing if beacon
 mavlink.PRECISION_LAND_MODE_TARGET = 2 // Use precision landing, searching for beacon if not found when land
                         // command accepted (land normally if beacon
                         // cannot be found).
-mavlink.PRECISION_LAND_MODE_ENUM_END = 3 // 
+mavlink.PRECISION_LAND_MODE_RTK = 3 // Use precision landing. We need RTK for landing on the normal waypoint
+                        // coordinates.
+mavlink.PRECISION_LAND_MODE_LSF = 4 // Use precision landing. We need LSF.
+mavlink.PRECISION_LAND_MODE_ENUM_END = 5 // 
 
 // PARACHUTE_ACTION
 mavlink.PARACHUTE_DISABLE = 0 // Disable auto-release of parachute (i.e. release triggered by crash
@@ -2965,7 +2922,7 @@ timeout.
                 battery_remaining         : Battery energy remaining, -1: Battery remaining energy not sent by autopilot (int8_t)
                 drop_rate_comm            : Communication drop rate, (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV) (uint16_t)
                 errors_comm               : Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV) (uint16_t)
-                errors_count1             : Autopilot-specific errors (uint16_t)
+                errors_count1             : AirRails custom bit field for additional sensor health states as in onboard_control_sensors_health, see MAV_SYS_STATUS_SENSOR_E1. (uint16_t)
                 errors_count2             : Autopilot-specific errors (uint16_t)
                 errors_count3             : Autopilot-specific errors (uint16_t)
                 errors_count4             : Autopilot-specific errors (uint16_t)
