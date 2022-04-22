@@ -25,7 +25,7 @@ var SerialConnection = function(serialPort, baudrate) {
     });
 
     self.serial.on('error', function(err) {
-        self.server.log("error", err.message);
+        self.logger.error(err.message);
     });
 };
 
