@@ -4,6 +4,37 @@ This is a small MAVLink JS library wrapper that provides a more streamlined acce
 
 ## General Usage
 
+### For most Integrations (Broker)
+
+```javascript
+var mavjs = require('mavlink-js');
+
+// Prepare your connection stream (serial, UDP, etc.):
+const systemConn = new mavjs.UdpConnection("0.0.0.0", 14550);
+
+// Get broker object
+const broker = new mavjs.MavlinkSystemBroker(systemConn);
+
+// Access all available systems
+let systems = broker.getSystems();
+
+systems.forEach((system, index) => {
+    console.log(`Got system ${system.sysId}`);
+});
+
+// OR: Get notified when a system connects
+broker.on('newSystem', function(system) {
+    console.log(`Got system ${system.sysId}`);
+});
+
+// OR: Get the universal system to access all data if you don't worry about multiple different systems
+system = broker.getUniversalSystem();
+console.log(`Got universal system ${system.sysId}`); // is ID 0
+
+```
+
+### For Low Level Handling (Direct)
+
 ```javascript
 var mavjs = require('mavlink-js');
 
