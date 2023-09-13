@@ -18,3 +18,4 @@ patch mavlink.patched.js patches/03-param-struct.patch
 patch mavlink.patched.js patches/04-unpack.patch
 patch mavlink.patched.js patches/05-version-auto-sense.patch
 patch mavlink.patched.js patches/06-unpack-ext-fix.patch
+patch mavlink.patched.js patches/07-249s-fix.patch

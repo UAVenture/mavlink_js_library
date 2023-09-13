@@ -1,0 +1,51 @@
+diff --git a/src/mavlink/mavlink.patched.js b/src/mavlink/mavlink.patched.js
+index 70e2601..69dca78 100644
+--- a/src/mavlink/mavlink.patched.js
++++ b/src/mavlink/mavlink.patched.js
+@@ -8305,7 +8305,7 @@ transitional support.
+ */
+ mavlink.messages.v2_extension = function(target_network, target_system, target_component, message_type, payload) {
+ 
+-    this.format = '<HBBB249s';
++    this.format = '<HBBB249A';
+     this._id = mavlink.MAVLINK_MSG_ID_V2_EXTENSION;
+     this.order_map = [1, 2, 3, 0, 4];
+     this.crc_extra = 8;
+@@ -8863,7 +8863,7 @@ A message containing logged data (see also MAV_CMD_LOGGING_START)
+ */
+ mavlink.messages.logging_data = function(target_system, target_component, sequence, length, first_message_offset, data) {
+ 
+-    this.format = '<HBBBB249s';
++    this.format = '<HBBBB249A';
+     this._id = mavlink.MAVLINK_MSG_ID_LOGGING_DATA;
+     this.order_map = [1, 2, 0, 3, 4, 5];
+     this.crc_extra = 193;
+@@ -8896,7 +8896,7 @@ sent back
+ */
+ mavlink.messages.logging_data_acked = function(target_system, target_component, sequence, length, first_message_offset, data) {
+ 
+-    this.format = '<HBBBB249s';
++    this.format = '<HBBBB249A';
+     this._id = mavlink.MAVLINK_MSG_ID_LOGGING_DATA_ACKED;
+     this.order_map = [1, 2, 0, 3, 4, 5];
+     this.crc_extra = 35;
+@@ -11377,7 +11377,7 @@ mavlink.map = {
+         245: { format: '<BB', type: mavlink.messages.extended_sys_state, order_map: [0, 1], crc_extra: 130 },
+         246: { format: '<IiiiHHhHHB9sBB', type: mavlink.messages.adsb_vehicle, order_map: [0, 1, 2, 9, 3, 4, 5, 6, 10, 11, 12, 7, 8], crc_extra: 184 },
+         247: { format: '<IfffBBB', type: mavlink.messages.collision, order_map: [4, 0, 5, 6, 1, 2, 3], crc_extra: 81 },
+-        248: { format: '<HBBB249s', type: mavlink.messages.v2_extension, order_map: [1, 2, 3, 0, 4], crc_extra: 8 },
++        248: { format: '<HBBB249A', type: mavlink.messages.v2_extension, order_map: [1, 2, 3, 0, 4], crc_extra: 8 },
+         249: { format: '<HBB32s', type: mavlink.messages.memory_vect, order_map: [0, 1, 2, 3], crc_extra: 204 },
+         250: { format: '<Qfff10s', type: mavlink.messages.debug_vect, order_map: [4, 0, 1, 2, 3], crc_extra: 49 },
+         251: { format: '<If10s', type: mavlink.messages.named_value_float, order_map: [0, 2, 1], crc_extra: 170 },
+@@ -11394,8 +11394,8 @@ mavlink.map = {
+         263: { format: '<QIiiii4fiBb205s', type: mavlink.messages.camera_image_captured, order_map: [1, 0, 8, 2, 3, 4, 5, 6, 7, 9, 10], crc_extra: 133 },
+         264: { format: '<QQQI', type: mavlink.messages.flight_information, order_map: [3, 0, 1, 2], crc_extra: 49 },
+         265: { format: '<Iffff', type: mavlink.messages.mount_orientation, order_map: [0, 1, 2, 3, 4], crc_extra: 26 },
+-        266: { format: '<HBBBB249s', type: mavlink.messages.logging_data, order_map: [1, 2, 0, 3, 4, 5], crc_extra: 193 },
+-        267: { format: '<HBBBB249s', type: mavlink.messages.logging_data_acked, order_map: [1, 2, 0, 3, 4, 5], crc_extra: 35 },
++        266: { format: '<HBBBB249A', type: mavlink.messages.logging_data, order_map: [1, 2, 0, 3, 4, 5], crc_extra: 193 },
++        267: { format: '<HBBBB249A', type: mavlink.messages.logging_data_acked, order_map: [1, 2, 0, 3, 4, 5], crc_extra: 35 },
+         268: { format: '<HBB', type: mavlink.messages.logging_ack, order_map: [1, 2, 0], crc_extra: 14 },
+         269: { format: '<fIHHHHHBBB32s160s', type: mavlink.messages.video_stream_information, order_map: [7, 8, 9, 2, 0, 3, 4, 1, 5, 6, 10, 11], crc_extra: 109 },
+         270: { format: '<fIHHHHHB', type: mavlink.messages.video_stream_status, order_map: [7, 2, 0, 3, 4, 1, 5, 6], crc_extra: 59 },
