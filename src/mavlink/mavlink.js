@@ -3405,7 +3405,7 @@ satellites.
 */
 mavlink.messages.gps_status = function(satellites_visible, satellite_prn, satellite_used, satellite_elevation, satellite_azimuth, satellite_snr) {
 
-    this.format = '<B20s20s20s20s20s';
+    this.format = '<B20A20A20A20A20A';
     this.id = mavlink.MAVLINK_MSG_ID_GPS_STATUS;
     this.order_map = [0, 1, 2, 3, 4, 5];
     this.crc_extra = 23;
@@ -5870,7 +5870,7 @@ File transfer message
 */
 mavlink.messages.file_transfer_protocol = function(target_network, target_system, target_component, payload) {
 
-    this.format = '<BBB251s';
+    this.format = '<BBB251A';
     this.id = mavlink.MAVLINK_MSG_ID_FILE_TRANSFER_PROTOCOL;
     this.order_map = [0, 1, 2, 3];
     this.crc_extra = 84;
@@ -6216,7 +6216,7 @@ Reply to LOG_REQUEST_DATA
 */
 mavlink.messages.log_data = function(id, ofs, count, data) {
 
-    this.format = '<IHB90s';
+    this.format = '<IHB90A';
     this.id = mavlink.MAVLINK_MSG_ID_LOG_DATA;
     this.order_map = [1, 0, 2, 3];
     this.crc_extra = 134;
@@ -6302,7 +6302,7 @@ Data for injecting into the onboard GPS (used for DGPS)
 */
 mavlink.messages.gps_inject_data = function(target_system, target_component, len, data) {
 
-    this.format = '<BBB110s';
+    this.format = '<BBB110A';
     this.id = mavlink.MAVLINK_MSG_ID_GPS_INJECT_DATA;
     this.order_map = [0, 1, 2, 3];
     this.crc_extra = 250;
@@ -6411,7 +6411,7 @@ to change just the baudrate.
 */
 mavlink.messages.serial_control = function(device, flags, timeout, baudrate, count, data) {
 
-    this.format = '<IHBBB70s';
+    this.format = '<IHBBB70A';
     this.id = mavlink.MAVLINK_MSG_ID_SERIAL_CONTROL;
     this.order_map = [2, 3, 1, 0, 4, 5];
     this.crc_extra = 220;
@@ -6593,7 +6593,7 @@ https://mavlink.io/en/services/image_transmission.html.
 */
 mavlink.messages.encapsulated_data = function(seqnr, data) {
 
-    this.format = '<H253s';
+    this.format = '<H253A';
     this.id = mavlink.MAVLINK_MSG_ID_ENCAPSULATED_DATA;
     this.order_map = [0, 1];
     this.crc_extra = 223;
@@ -6949,7 +6949,7 @@ data)
 */
 mavlink.messages.resource_request = function(request_id, uri_type, uri, transfer_type, storage) {
 
-    this.format = '<BB120sB120s';
+    this.format = '<BB120AB120A';
     this.id = mavlink.MAVLINK_MSG_ID_RESOURCE_REQUEST;
     this.order_map = [0, 1, 2, 3, 4];
     this.crc_extra = 72;
@@ -7142,7 +7142,7 @@ in response to a request with MAV_CMD_REQUEST_MESSAGE.
 */
 mavlink.messages.autopilot_version = function(capabilities, flight_sw_version, middleware_sw_version, os_sw_version, board_version, flight_custom_version, middleware_custom_version, os_custom_version, vendor_id, product_id, uid, uid2) {
 
-    this.format = '<QQIIIIHH8s8s8s18s';
+    this.format = '<QQIIIIHH8A8A8A18A';
     this.id = mavlink.MAVLINK_MSG_ID_AUTOPILOT_VERSION;
     this.order_map = [0, 2, 3, 4, 5, 8, 9, 10, 6, 7, 1, 11];
     this.crc_extra = 178;
@@ -7464,7 +7464,7 @@ WIP: Reply to DATA_FETCH
 */
 mavlink.messages.data_data = function(item_type, item_id, offset, count, data) {
 
-    this.format = '<IIBB240s';
+    this.format = '<IIBB240A';
     this.id = mavlink.MAVLINK_MSG_ID_DATA_DATA;
     this.order_map = [2, 0, 1, 3, 4];
     this.crc_extra = 73;
@@ -7757,7 +7757,7 @@ mavlink.messages.mission_check.prototype.pack = function(mav) {
 */
 mavlink.messages.license_status = function(license_type, time_utc, build_time_utc, end_time_utc, uid, reserve) {
 
-    this.format = '<IIIB12s16s';
+    this.format = '<IIIB12A16A';
     this.id = mavlink.MAVLINK_MSG_ID_LICENSE_STATUS;
     this.order_map = [3, 0, 1, 2, 4, 5];
     this.crc_extra = 207;
@@ -7914,7 +7914,7 @@ RTCM message for injecting into the onboard GPS (used for DGPS)
 */
 mavlink.messages.gps_rtcm_data = function(flags, len, data) {
 
-    this.format = '<BB180s';
+    this.format = '<BB180A';
     this.id = mavlink.MAVLINK_MSG_ID_GPS_RTCM_DATA;
     this.order_map = [0, 1, 2];
     this.crc_extra = 35;
@@ -8305,7 +8305,7 @@ transitional support.
 */
 mavlink.messages.v2_extension = function(target_network, target_system, target_component, message_type, payload) {
 
-    this.format = '<HBBB249s';
+    this.format = '<HBBB249A';
     this.id = mavlink.MAVLINK_MSG_ID_V2_EXTENSION;
     this.order_map = [1, 2, 3, 0, 4];
     this.crc_extra = 8;
@@ -8337,7 +8337,7 @@ getting experimental debug output.
 */
 mavlink.messages.memory_vect = function(address, ver, type, value) {
 
-    this.format = '<HBB32s';
+    this.format = '<HBB32A';
     this.id = mavlink.MAVLINK_MSG_ID_MEMORY_VECT;
     this.order_map = [0, 1, 2, 3];
     this.crc_extra = 204;
@@ -8525,7 +8525,7 @@ and zero initial_timestamp will disable signing
 */
 mavlink.messages.setup_signing = function(target_system, target_component, secret_key, initial_timestamp) {
 
-    this.format = '<QBB32s';
+    this.format = '<QBB32A';
     this.id = mavlink.MAVLINK_MSG_ID_SETUP_SIGNING;
     this.order_map = [1, 2, 3, 0];
     this.crc_extra = 71;
@@ -8624,7 +8624,7 @@ MAV_CMD_REQUEST_MESSAGE command.
 */
 mavlink.messages.camera_information = function(time_boot_ms, vendor_name, model_name, firmware_version, focal_length, sensor_size_h, sensor_size_v, resolution_h, resolution_v, lens_id, flags, cam_definition_version, cam_definition_uri) {
 
-    this.format = '<IIfffIHHH32s32sB140s';
+    this.format = '<IIfffIHHH32A32AB140s';
     this.id = mavlink.MAVLINK_MSG_ID_CAMERA_INFORMATION;
     this.order_map = [0, 9, 10, 1, 2, 3, 4, 6, 7, 11, 5, 8, 12];
     this.crc_extra = 92;
@@ -8863,7 +8863,7 @@ A message containing logged data (see also MAV_CMD_LOGGING_START)
 */
 mavlink.messages.logging_data = function(target_system, target_component, sequence, length, first_message_offset, data) {
 
-    this.format = '<HBBBB249s';
+    this.format = '<HBBBB249A';
     this.id = mavlink.MAVLINK_MSG_ID_LOGGING_DATA;
     this.order_map = [1, 2, 0, 3, 4, 5];
     this.crc_extra = 193;
@@ -8896,7 +8896,7 @@ sent back
 */
 mavlink.messages.logging_data_acked = function(target_system, target_component, sequence, length, first_message_offset, data) {
 
-    this.format = '<HBBBB249s';
+    this.format = '<HBBBB249A';
     this.id = mavlink.MAVLINK_MSG_ID_LOGGING_DATA_ACKED;
     this.order_map = [1, 2, 0, 3, 4, 5];
     this.crc_extra = 35;
@@ -9492,7 +9492,7 @@ ESC information for lower rate streaming. Recommended streaming rate
 */
 mavlink.messages.esc_info = function(index, time_usec, counter, count, connection_type, info, failure_flags, error_count, temperature) {
 
-    this.format = '<Q4IH4HBBBB4s';
+    this.format = '<Q4IH4HBBBB4A';
     this.id = mavlink.MAVLINK_MSG_ID_ESC_INFO;
     this.order_map = [4, 0, 2, 5, 6, 7, 3, 1, 8];
     this.crc_extra = 221;
@@ -9678,7 +9678,7 @@ frequency. The UAVCAN specification is available at http://uavcan.org.
 */
 mavlink.messages.uavcan_node_info = function(time_usec, uptime_sec, name, hw_version_major, hw_version_minor, hw_unique_id, sw_version_major, sw_version_minor, sw_vcs_commit) {
 
-    this.format = '<QII80sBB16sBB';
+    this.format = '<QII80sBB16ABB';
     this.id = mavlink.MAVLINK_MSG_ID_UAVCAN_NODE_INFO;
     this.order_map = [0, 1, 3, 4, 5, 6, 7, 8, 2];
     this.crc_extra = 95;
@@ -10170,7 +10170,7 @@ The global position resulting from GPS and sensor fusion.
 */
 mavlink.messages.utm_global_position = function(time, uas_id, lat, lon, alt, relative_alt, vx, vy, vz, h_acc, v_acc, vel_acc, next_lat, next_lon, next_alt, update_rate, flight_state, flags) {
 
-    this.format = '<QiiiiiiihhhHHHH18sBB';
+    this.format = '<QiiiiiiihhhHHHH18ABB';
     this.id = mavlink.MAVLINK_MSG_ID_UTM_GLOBAL_POSITION;
     this.order_map = [0, 15, 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 5, 6, 7, 14, 16, 17];
     this.crc_extra = 99;
@@ -10416,7 +10416,7 @@ MAVLink specification.
 */
 mavlink.messages.tunnel = function(target_system, target_component, payload_type, payload_length, payload) {
 
-    this.format = '<HBBB128s';
+    this.format = '<HBBB128A';
     this.id = mavlink.MAVLINK_MSG_ID_TUNNEL;
     this.order_map = [1, 2, 0, 3, 4];
     this.crc_extra = 147;
@@ -10462,7 +10462,7 @@ Hardware status sent by an onboard computer.
 */
 mavlink.messages.onboard_computer_status = function(time_usec, uptime, type, cpu_cores, cpu_combined, gpu_cores, gpu_combined, temperature_board, temperature_core, fan_speed, ram_usage, ram_total, storage_type, storage_usage, storage_total, link_type, link_tx_rate, link_rx_rate, link_tx_max, link_rx_max) {
 
-    this.format = '<QIII4I4I4I6I6I6I6I6I4hB8s10s4s10sb8s';
+    this.format = '<QIII4I4I4I6I6I6I6I6I4hB8A10A4A10Ab8A';
     this.id = mavlink.MAVLINK_MSG_ID_ONBOARD_COMPUTER_STATUS;
     this.order_map = [0, 1, 13, 14, 15, 16, 17, 18, 19, 12, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     this.crc_extra = 156;
@@ -10594,7 +10594,7 @@ destination_component instead of target_component).
 */
 mavlink.messages.event = function(destination_component, destination_system, id, event_time_boot_ms, sequence, log_levels, arguments) {
 
-    this.format = '<IIHBBB40s';
+    this.format = '<IIHBBB40A';
     this.id = mavlink.MAVLINK_MSG_ID_EVENT;
     this.order_map = [3, 4, 0, 1, 2, 5, 6];
     this.crc_extra = 160;
@@ -10790,7 +10790,7 @@ https://mavlink.io/en/services/opendroneid.html.
 */
 mavlink.messages.open_drone_id_basic_id = function(target_system, target_component, id_or_mac, id_type, ua_type, uas_id) {
 
-    this.format = '<BB20sBB20s';
+    this.format = '<BB20ABB20A';
     this.id = mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_BASIC_ID;
     this.order_map = [0, 1, 2, 3, 4, 5];
     this.crc_extra = 114;
@@ -10837,7 +10837,7 @@ altitude, direction and speed of the aircraft.
 */
 mavlink.messages.open_drone_id_location = function(target_system, target_component, id_or_mac, status, direction, speed_horizontal, speed_vertical, latitude, longitude, altitude_barometric, altitude_geodetic, height_reference, height, horizontal_accuracy, vertical_accuracy, barometer_accuracy, speed_accuracy, timestamp, timestamp_accuracy) {
 
-    this.format = '<iiffffHHhBB20sBBBBBBB';
+    this.format = '<iiffffHHhBB20ABBBBBBB';
     this.id = mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_LOCATION;
     this.order_map = [9, 10, 11, 12, 6, 7, 8, 0, 1, 2, 3, 13, 4, 14, 15, 16, 17, 5, 18];
     this.crc_extra = 254;
@@ -10879,7 +10879,7 @@ size of AuthData is 23 bytes.
 */
 mavlink.messages.open_drone_id_authentication = function(target_system, target_component, id_or_mac, authentication_type, data_page, page_count, length, timestamp, authentication_data) {
 
-    this.format = '<IBB20sBBBB23s';
+    this.format = '<IBB20ABBBB23A';
     this.id = mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_AUTHENTICATION;
     this.order_map = [1, 2, 3, 4, 5, 6, 7, 0, 8];
     this.crc_extra = 49;
@@ -10914,7 +10914,7 @@ additional information that could reduce the threat profile of a UA
 */
 mavlink.messages.open_drone_id_self_id = function(target_system, target_component, id_or_mac, description_type, description) {
 
-    this.format = '<BB20sB23s';
+    this.format = '<BB20AB23s';
     this.id = mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_SELF_ID;
     this.order_map = [0, 1, 2, 3, 4];
     this.crc_extra = 249;
@@ -10955,7 +10955,7 @@ and possible aircraft group information.
 */
 mavlink.messages.open_drone_id_system = function(target_system, target_component, id_or_mac, operator_location_type, classification_type, operator_latitude, operator_longitude, area_count, area_radius, area_ceiling, area_floor, category_eu, class_eu) {
 
-    this.format = '<iiffHHBB20sBBBB';
+    this.format = '<iiffHHBB20ABBBB';
     this.id = mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_SYSTEM;
     this.order_map = [6, 7, 8, 9, 10, 0, 1, 4, 5, 2, 3, 11, 12];
     this.crc_extra = 203;
@@ -10987,7 +10987,7 @@ the CAA (Civil Aviation Authority) issued operator ID.
 */
 mavlink.messages.open_drone_id_operator_id = function(target_system, target_component, id_or_mac, operator_id_type, operator_id) {
 
-    this.format = '<BB20sB20s';
+    this.format = '<BB20AB20s';
     this.id = mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_OPERATOR_ID;
     this.order_map = [0, 1, 2, 3, 4];
     this.crc_extra = 49;
@@ -11022,7 +11022,7 @@ Long Range/Extended Advertising or on WiFi Neighbor Aware Networking.
 */
 mavlink.messages.open_drone_id_message_pack = function(target_system, target_component, single_message_size, msg_pack_size, messages) {
 
-    this.format = '<BBBB250s';
+    this.format = '<BBBB250A';
     this.id = mavlink.MAVLINK_MSG_ID_OPEN_DRONE_ID_MESSAGE_PACK;
     this.order_map = [0, 1, 2, 3, 4];
     this.crc_extra = 62;
@@ -11083,7 +11083,7 @@ Status information for GPS devices.
 */
 mavlink.messages.gps_device_info = function(gps_type, gps_num, data) {
 
-    this.format = '<HB250s';
+    this.format = '<HB250A';
     this.id = mavlink.MAVLINK_MSG_ID_GPS_DEVICE_INFO;
     this.order_map = [0, 1, 2];
     this.crc_extra = 234;
@@ -11206,7 +11206,7 @@ core to respond directly.
 */
 mavlink.messages.protocol_version = function(version, min_version, max_version, spec_version_hash, library_version_hash) {
 
-    this.format = '<HHH8s8s';
+    this.format = '<HHH8A8A';
     this.id = mavlink.MAVLINK_MSG_ID_PROTOCOL_VERSION;
     this.order_map = [0, 1, 2, 3, 4];
     this.crc_extra = 217;
@@ -11242,7 +11242,7 @@ mavlink.map = {
         22: { format: '<fHH16sB', type: mavlink.messages.param_value, order_map: [3, 0, 4, 1, 2], crc_extra: 220 },
         23: { format: '<fBB16sB', type: mavlink.messages.param_set, order_map: [1, 2, 3, 0, 4], crc_extra: 168 },
         24: { format: '<QiiiHHHHBBiIIIIH', type: mavlink.messages.gps_raw_int, order_map: [0, 8, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15], crc_extra: 24 },
-        25: { format: '<B20s20s20s20s20s', type: mavlink.messages.gps_status, order_map: [0, 1, 2, 3, 4, 5], crc_extra: 23 },
+        25: { format: '<B20A20A20A20A20A', type: mavlink.messages.gps_status, order_map: [0, 1, 2, 3, 4, 5], crc_extra: 23 },
         26: { format: '<Ihhhhhhhhhh', type: mavlink.messages.scaled_imu, order_map: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], crc_extra: 170 },
         27: { format: '<QhhhhhhhhhBh', type: mavlink.messages.raw_imu, order_map: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], crc_extra: 144 },
         28: { format: '<Qhhhh', type: mavlink.messages.raw_pressure, order_map: [0, 1, 2, 3, 4], crc_extra: 67 },
@@ -11309,7 +11309,7 @@ mavlink.map = {
         107: { format: '<QfffffffffffffIB', type: mavlink.messages.hil_sensor, order_map: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], crc_extra: 108 },
         108: { format: '<fffffffffffffffffffff', type: mavlink.messages.sim_state, order_map: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], crc_extra: 32 },
         109: { format: '<HHBBBBB', type: mavlink.messages.radio_status, order_map: [2, 3, 4, 5, 6, 0, 1], crc_extra: 185 },
-        110: { format: '<BBB251s', type: mavlink.messages.file_transfer_protocol, order_map: [0, 1, 2, 3], crc_extra: 84 },
+        110: { format: '<BBB251A', type: mavlink.messages.file_transfer_protocol, order_map: [0, 1, 2, 3], crc_extra: 84 },
         111: { format: '<qq', type: mavlink.messages.timesync, order_map: [0, 1], crc_extra: 34 },
         112: { format: '<QI', type: mavlink.messages.camera_trigger, order_map: [0, 1], crc_extra: 174 },
         113: { format: '<QiiiHHHhhhHBBBH', type: mavlink.messages.hil_gps, order_map: [0, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14], crc_extra: 124 },
@@ -11319,18 +11319,18 @@ mavlink.map = {
         117: { format: '<HHBB', type: mavlink.messages.log_request_list, order_map: [2, 3, 0, 1], crc_extra: 128 },
         118: { format: '<IIHHH', type: mavlink.messages.log_entry, order_map: [2, 3, 4, 0, 1], crc_extra: 56 },
         119: { format: '<IIHBB', type: mavlink.messages.log_request_data, order_map: [3, 4, 2, 0, 1], crc_extra: 116 },
-        120: { format: '<IHB90s', type: mavlink.messages.log_data, order_map: [1, 0, 2, 3], crc_extra: 134 },
+        120: { format: '<IHB90A', type: mavlink.messages.log_data, order_map: [1, 0, 2, 3], crc_extra: 134 },
         121: { format: '<BB', type: mavlink.messages.log_erase, order_map: [0, 1], crc_extra: 237 },
         122: { format: '<BB', type: mavlink.messages.log_request_end, order_map: [0, 1], crc_extra: 203 },
-        123: { format: '<BBB110s', type: mavlink.messages.gps_inject_data, order_map: [0, 1, 2, 3], crc_extra: 250 },
+        123: { format: '<BBB110A', type: mavlink.messages.gps_inject_data, order_map: [0, 1, 2, 3], crc_extra: 250 },
         124: { format: '<QiiiIHHHHBBBHiIIII', type: mavlink.messages.gps2_raw, order_map: [0, 9, 1, 2, 3, 5, 6, 7, 8, 10, 11, 4, 12, 13, 14, 15, 16, 17], crc_extra: 87 },
         125: { format: '<HHH', type: mavlink.messages.power_status, order_map: [0, 1, 2], crc_extra: 203 },
-        126: { format: '<IHBBB70s', type: mavlink.messages.serial_control, order_map: [2, 3, 1, 0, 4, 5], crc_extra: 220 },
+        126: { format: '<IHBBB70A', type: mavlink.messages.serial_control, order_map: [2, 3, 1, 0, 4, 5], crc_extra: 220 },
         127: { format: '<IIiiiIiHBBBBB', type: mavlink.messages.gps_rtk, order_map: [0, 8, 7, 1, 9, 10, 11, 12, 2, 3, 4, 5, 6], crc_extra: 25 },
         128: { format: '<IIiiiIiHBBBBB', type: mavlink.messages.gps2_rtk, order_map: [0, 8, 7, 1, 9, 10, 11, 12, 2, 3, 4, 5, 6], crc_extra: 226 },
         129: { format: '<Ihhhhhhhhhh', type: mavlink.messages.scaled_imu3, order_map: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], crc_extra: 46 },
         130: { format: '<IHHHBBB', type: mavlink.messages.data_transmission_handshake, order_map: [4, 0, 1, 2, 3, 5, 6], crc_extra: 29 },
-        131: { format: '<H253s', type: mavlink.messages.encapsulated_data, order_map: [0, 1], crc_extra: 223 },
+        131: { format: '<H253A', type: mavlink.messages.encapsulated_data, order_map: [0, 1], crc_extra: 223 },
         132: { format: '<IHHHBBBBff4fB', type: mavlink.messages.distance_sensor, order_map: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], crc_extra: 85 },
         133: { format: '<QiiH', type: mavlink.messages.terrain_request, order_map: [1, 2, 3, 0], crc_extra: 6 },
         134: { format: '<iiH16hB', type: mavlink.messages.terrain_data, order_map: [0, 1, 2, 4, 3], crc_extra: 229 },
@@ -11341,12 +11341,12 @@ mavlink.map = {
         139: { format: '<Q8fBBB', type: mavlink.messages.set_actuator_control_target, order_map: [0, 2, 3, 4, 1], crc_extra: 168 },
         140: { format: '<Q8fB', type: mavlink.messages.actuator_control_target, order_map: [0, 2, 1], crc_extra: 181 },
         141: { format: '<Qffffff', type: mavlink.messages.altitude, order_map: [0, 1, 2, 3, 4, 5, 6], crc_extra: 47 },
-        142: { format: '<BB120sB120s', type: mavlink.messages.resource_request, order_map: [0, 1, 2, 3, 4], crc_extra: 72 },
+        142: { format: '<BB120AB120A', type: mavlink.messages.resource_request, order_map: [0, 1, 2, 3, 4], crc_extra: 72 },
         143: { format: '<Iffhh', type: mavlink.messages.scaled_pressure3, order_map: [0, 1, 2, 3, 4], crc_extra: 131 },
         144: { format: '<QQiif3f3f4f3f3fB', type: mavlink.messages.follow_target, order_map: [0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 1], crc_extra: 127 },
         146: { format: '<Qffffffffff3f3f4ffff', type: mavlink.messages.control_system_state, order_map: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], crc_extra: 103 },
         147: { format: '<iih10HhBBBbiB4HBI', type: mavlink.messages.battery_status, order_map: [5, 6, 7, 2, 3, 4, 0, 1, 8, 9, 10, 11, 12, 13], crc_extra: 154 },
-        148: { format: '<QQIIIIHH8s8s8s18s', type: mavlink.messages.autopilot_version, order_map: [0, 2, 3, 4, 5, 8, 9, 10, 6, 7, 1, 11], crc_extra: 178 },
+        148: { format: '<QQIIIIHH8A8A8A18A', type: mavlink.messages.autopilot_version, order_map: [0, 2, 3, 4, 5, 8, 9, 10, 6, 7, 1, 11], crc_extra: 178 },
         149: { format: '<QfffffBBfff4fBB', type: mavlink.messages.landing_target, order_map: [0, 6, 7, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13], crc_extra: 200 },
         150: { format: '<Qiif4fHBBB', type: mavlink.messages.landing_target_lsf_int, order_map: [0, 5, 6, 7, 1, 2, 3, 8, 4], crc_extra: 95 },
         162: { format: '<IHBBB', type: mavlink.messages.fence_status, order_map: [2, 1, 3, 0, 4], crc_extra: 189 },
@@ -11355,7 +11355,7 @@ mavlink.map = {
         192: { format: '<ffffffffffBBBBfBBf', type: mavlink.messages.mag_cal_report, order_map: [10, 11, 12, 13, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17], crc_extra: 36 },
         219: { format: '<QIIIiiii4fBbB', type: mavlink.messages.camera_image_captured_data, order_map: [1, 2, 0, 9, 3, 4, 5, 6, 7, 8, 10, 11], crc_extra: 70 },
         220: { format: '<4i4h4h4h4h4H4HBB', type: mavlink.messages.motor_actuator_data, order_map: [7, 8, 0, 1, 2, 3, 4, 5, 6], crc_extra: 3 },
-        221: { format: '<IIBB240s', type: mavlink.messages.data_data, order_map: [2, 0, 1, 3, 4], crc_extra: 73 },
+        221: { format: '<IIBB240A', type: mavlink.messages.data_data, order_map: [2, 0, 1, 3, 4], crc_extra: 73 },
         222: { format: '<IIIBBB', type: mavlink.messages.data_fetch, order_map: [3, 4, 5, 0, 1, 2], crc_extra: 29 },
         223: { format: '<IBBB', type: mavlink.messages.data_available, order_map: [1, 2, 3, 0], crc_extra: 185 },
         224: { format: '<IIBBB', type: mavlink.messages.data_list, order_map: [2, 3, 4, 0, 1], crc_extra: 121 },
@@ -11363,11 +11363,11 @@ mavlink.map = {
         226: { format: '<IIHHHHB', type: mavlink.messages.extended_log_entry, order_map: [2, 3, 4, 0, 1, 6, 5], crc_extra: 141 },
         227: { format: '<2iIII2hHhhBB', type: mavlink.messages.extended_hud, order_map: [4, 0, 1, 2, 5, 3, 6, 7, 8, 9], crc_extra: 77 },
         228: { format: '<IHBBB', type: mavlink.messages.mission_check, order_map: [2, 3, 1, 0, 4], crc_extra: 205 },
-        229: { format: '<IIIB12s16s', type: mavlink.messages.license_status, order_map: [3, 0, 1, 2, 4, 5], crc_extra: 207 },
+        229: { format: '<IIIB12A16A', type: mavlink.messages.license_status, order_map: [3, 0, 1, 2, 4, 5], crc_extra: 207 },
         230: { format: '<QffffffffH', type: mavlink.messages.estimator_status, order_map: [0, 9, 1, 2, 3, 4, 5, 6, 7, 8], crc_extra: 163 },
         231: { format: '<Qffffffff', type: mavlink.messages.wind_cov, order_map: [0, 1, 2, 3, 4, 5, 6, 7, 8], crc_extra: 105 },
         232: { format: '<QIiifffffffffHHBBBH', type: mavlink.messages.gps_input, order_map: [0, 15, 13, 1, 14, 16, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 17, 18], crc_extra: 151 },
-        233: { format: '<BB180s', type: mavlink.messages.gps_rtcm_data, order_map: [0, 1, 2], crc_extra: 35 },
+        233: { format: '<BB180A', type: mavlink.messages.gps_rtcm_data, order_map: [0, 1, 2], crc_extra: 35 },
         234: { format: '<IiihhHhhhHBBbBBBbBBBbbBB', type: mavlink.messages.high_latency, order_map: [10, 0, 11, 3, 4, 5, 12, 6, 1, 2, 7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 9], crc_extra: 150 },
         235: { format: '<IiiHhhHHHBBBBBBBBBBBBbbbbbb', type: mavlink.messages.high_latency2, order_map: [0, 9, 10, 3, 1, 2, 4, 5, 11, 12, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 7, 8, 24, 25, 26], crc_extra: 179 },
         241: { format: '<QfffIII', type: mavlink.messages.vibration, order_map: [0, 1, 2, 3, 4, 5, 6], crc_extra: 90 },
@@ -11377,25 +11377,25 @@ mavlink.map = {
         245: { format: '<BB', type: mavlink.messages.extended_sys_state, order_map: [0, 1], crc_extra: 130 },
         246: { format: '<IiiiHHhHHB9sBB', type: mavlink.messages.adsb_vehicle, order_map: [0, 1, 2, 9, 3, 4, 5, 6, 10, 11, 12, 7, 8], crc_extra: 184 },
         247: { format: '<IfffBBB', type: mavlink.messages.collision, order_map: [4, 0, 5, 6, 1, 2, 3], crc_extra: 81 },
-        248: { format: '<HBBB249s', type: mavlink.messages.v2_extension, order_map: [1, 2, 3, 0, 4], crc_extra: 8 },
-        249: { format: '<HBB32s', type: mavlink.messages.memory_vect, order_map: [0, 1, 2, 3], crc_extra: 204 },
+        248: { format: '<HBBB249A', type: mavlink.messages.v2_extension, order_map: [1, 2, 3, 0, 4], crc_extra: 8 },
+        249: { format: '<HBB32A', type: mavlink.messages.memory_vect, order_map: [0, 1, 2, 3], crc_extra: 204 },
         250: { format: '<Qfff10s', type: mavlink.messages.debug_vect, order_map: [4, 0, 1, 2, 3], crc_extra: 49 },
         251: { format: '<If10s', type: mavlink.messages.named_value_float, order_map: [0, 2, 1], crc_extra: 170 },
         252: { format: '<Ii10s', type: mavlink.messages.named_value_int, order_map: [0, 2, 1], crc_extra: 44 },
         253: { format: '<B50sHB', type: mavlink.messages.statustext, order_map: [0, 1, 2, 3], crc_extra: 83 },
         254: { format: '<IfB', type: mavlink.messages.debug, order_map: [0, 2, 1], crc_extra: 46 },
-        256: { format: '<QBB32s', type: mavlink.messages.setup_signing, order_map: [1, 2, 3, 0], crc_extra: 71 },
+        256: { format: '<QBB32A', type: mavlink.messages.setup_signing, order_map: [1, 2, 3, 0], crc_extra: 71 },
         257: { format: '<IIB', type: mavlink.messages.button_change, order_map: [0, 1, 2], crc_extra: 131 },
         258: { format: '<BB30s200s', type: mavlink.messages.play_tune, order_map: [0, 1, 2, 3], crc_extra: 187 },
-        259: { format: '<IIfffIHHH32s32sB140s', type: mavlink.messages.camera_information, order_map: [0, 9, 10, 1, 2, 3, 4, 6, 7, 11, 5, 8, 12], crc_extra: 92 },
+        259: { format: '<IIfffIHHH32A32AB140s', type: mavlink.messages.camera_information, order_map: [0, 9, 10, 1, 2, 3, 4, 6, 7, 11, 5, 8, 12], crc_extra: 92 },
         260: { format: '<IBff', type: mavlink.messages.camera_settings, order_map: [0, 1, 2, 3], crc_extra: 146 },
         261: { format: '<IfffffBBBB32s', type: mavlink.messages.storage_information, order_map: [0, 6, 7, 8, 1, 2, 3, 4, 5, 9, 10], crc_extra: 179 },
         262: { format: '<IfIfBBi', type: mavlink.messages.camera_capture_status, order_map: [0, 4, 5, 1, 2, 3, 6], crc_extra: 12 },
         263: { format: '<QIiiii4fiBb205s', type: mavlink.messages.camera_image_captured, order_map: [1, 0, 8, 2, 3, 4, 5, 6, 7, 9, 10], crc_extra: 133 },
         264: { format: '<QQQI', type: mavlink.messages.flight_information, order_map: [3, 0, 1, 2], crc_extra: 49 },
         265: { format: '<Iffff', type: mavlink.messages.mount_orientation, order_map: [0, 1, 2, 3, 4], crc_extra: 26 },
-        266: { format: '<HBBBB249s', type: mavlink.messages.logging_data, order_map: [1, 2, 0, 3, 4, 5], crc_extra: 193 },
-        267: { format: '<HBBBB249s', type: mavlink.messages.logging_data_acked, order_map: [1, 2, 0, 3, 4, 5], crc_extra: 35 },
+        266: { format: '<HBBBB249A', type: mavlink.messages.logging_data, order_map: [1, 2, 0, 3, 4, 5], crc_extra: 193 },
+        267: { format: '<HBBBB249A', type: mavlink.messages.logging_data_acked, order_map: [1, 2, 0, 3, 4, 5], crc_extra: 35 },
         268: { format: '<HBB', type: mavlink.messages.logging_ack, order_map: [1, 2, 0], crc_extra: 14 },
         269: { format: '<fIHHHHHBBB32s160s', type: mavlink.messages.video_stream_information, order_map: [7, 8, 9, 2, 0, 3, 4, 1, 5, 6, 10, 11], crc_extra: 109 },
         270: { format: '<fIHHHHHB', type: mavlink.messages.video_stream_status, order_map: [7, 2, 0, 3, 4, 1, 5, 6], crc_extra: 59 },
@@ -11411,12 +11411,12 @@ mavlink.map = {
         286: { format: '<Q4fIfffIfHBBB', type: mavlink.messages.autopilot_state_for_gimbal_device, order_map: [9, 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 11], crc_extra: 210 },
         287: { format: '<IffffBBB', type: mavlink.messages.gimbal_manager_set_pitchyaw, order_map: [5, 6, 0, 7, 1, 2, 3, 4], crc_extra: 1 },
         288: { format: '<IffffBBB', type: mavlink.messages.gimbal_manager_set_manual_control, order_map: [5, 6, 0, 7, 1, 2, 3, 4], crc_extra: 20 },
-        290: { format: '<Q4IH4HBBBB4s', type: mavlink.messages.esc_info, order_map: [4, 0, 2, 5, 6, 7, 3, 1, 8], crc_extra: 221 },
+        290: { format: '<Q4IH4HBBBB4A', type: mavlink.messages.esc_info, order_map: [4, 0, 2, 5, 6, 7, 3, 1, 8], crc_extra: 221 },
         291: { format: '<Q4i4f4fB', type: mavlink.messages.esc_status, order_map: [4, 0, 1, 2, 3], crc_extra: 10 },
         299: { format: '<32s64sbb', type: mavlink.messages.wifi_config_ap, order_map: [0, 1, 2, 3], crc_extra: 19 },
         301: { format: '<IiiHHHHHHHbBBBB7s20s', type: mavlink.messages.ais_vessel, order_map: [0, 1, 2, 3, 4, 5, 10, 11, 12, 6, 7, 13, 14, 15, 16, 8, 9], crc_extra: 243 },
         310: { format: '<QIHBBB', type: mavlink.messages.uavcan_node_status, order_map: [0, 1, 3, 4, 5, 2], crc_extra: 28 },
-        311: { format: '<QII80sBB16sBB', type: mavlink.messages.uavcan_node_info, order_map: [0, 1, 3, 4, 5, 6, 7, 8, 2], crc_extra: 95 },
+        311: { format: '<QII80sBB16ABB', type: mavlink.messages.uavcan_node_info, order_map: [0, 1, 3, 4, 5, 6, 7, 8, 2], crc_extra: 95 },
         320: { format: '<hBB16s', type: mavlink.messages.param_ext_request_read, order_map: [1, 2, 3, 0], crc_extra: 243 },
         321: { format: '<BB', type: mavlink.messages.param_ext_request_list, order_map: [0, 1], crc_extra: 88 },
         322: { format: '<HH16s128sB', type: mavlink.messages.param_ext_value, order_map: [2, 3, 4, 0, 1], crc_extra: 243 },
@@ -11430,36 +11430,36 @@ mavlink.map = {
         335: { format: '<QQHHBBBB', type: mavlink.messages.isbd_link_status, order_map: [0, 1, 2, 3, 4, 5, 6, 7], crc_extra: 225 },
         336: { format: '<BB16s16s32s16sBB', type: mavlink.messages.cellular_config, order_map: [0, 1, 2, 3, 4, 5, 6, 7], crc_extra: 245 },
         339: { format: '<fB', type: mavlink.messages.raw_rpm, order_map: [1, 0], crc_extra: 199 },
-        340: { format: '<QiiiiiiihhhHHHH18sBB', type: mavlink.messages.utm_global_position, order_map: [0, 15, 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 5, 6, 7, 14, 16, 17], crc_extra: 99 },
+        340: { format: '<QiiiiiiihhhHHHH18ABB', type: mavlink.messages.utm_global_position, order_map: [0, 15, 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 5, 6, 7, 14, 16, 17], crc_extra: 99 },
         350: { format: '<QH10s58f', type: mavlink.messages.debug_float_array, order_map: [0, 2, 1, 3], crc_extra: 232 },
         360: { format: '<QfiifB', type: mavlink.messages.orbit_execution_status, order_map: [0, 1, 5, 2, 3, 4], crc_extra: 11 },
         370: { format: '<iiHHHHHBBB16s50sHBII11s', type: mavlink.messages.smart_battery_info, order_map: [7, 8, 9, 0, 1, 2, 10, 11, 3, 4, 5, 6, 12, 13, 14, 15, 16], crc_extra: 75 },
         373: { format: '<QfffffIiHhh', type: mavlink.messages.generator_status, order_map: [0, 8, 1, 2, 3, 4, 9, 5, 10, 6, 7], crc_extra: 117 },
         375: { format: '<QI32f', type: mavlink.messages.actuator_output_status, order_map: [0, 1, 2], crc_extra: 251 },
         380: { format: '<iiiii', type: mavlink.messages.time_estimate_to_target, order_map: [0, 1, 2, 3, 4], crc_extra: 232 },
-        385: { format: '<HBBB128s', type: mavlink.messages.tunnel, order_map: [1, 2, 0, 3, 4], crc_extra: 147 },
-        390: { format: '<QIII4I4I4I6I6I6I6I6I4hB8s10s4s10sb8s', type: mavlink.messages.onboard_computer_status, order_map: [0, 1, 13, 14, 15, 16, 17, 18, 19, 12, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], crc_extra: 156 },
+        385: { format: '<HBBB128A', type: mavlink.messages.tunnel, order_map: [1, 2, 0, 3, 4], crc_extra: 147 },
+        390: { format: '<QIII4I4I4I6I6I6I6I6I4hB8A10A4A10Ab8A', type: mavlink.messages.onboard_computer_status, order_map: [0, 1, 13, 14, 15, 16, 17, 18, 19, 12, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], crc_extra: 156 },
         395: { format: '<III100s100s', type: mavlink.messages.component_information, order_map: [0, 1, 3, 2, 4], crc_extra: 0 },
         400: { format: '<IBB248s', type: mavlink.messages.play_tune_v2, order_map: [1, 2, 0, 3], crc_extra: 110 },
         401: { format: '<IBB', type: mavlink.messages.supported_tunes, order_map: [1, 2, 0], crc_extra: 183 },
-        410: { format: '<IIHBBB40s', type: mavlink.messages.event, order_map: [3, 4, 0, 1, 2, 5, 6], crc_extra: 160 },
+        410: { format: '<IIHBBB40A', type: mavlink.messages.event, order_map: [3, 4, 0, 1, 2, 5, 6], crc_extra: 160 },
         411: { format: '<HB', type: mavlink.messages.current_event_sequence, order_map: [0, 1], crc_extra: 106 },
         412: { format: '<HHBB', type: mavlink.messages.request_event, order_map: [2, 3, 0, 1], crc_extra: 33 },
         413: { format: '<HHBBB', type: mavlink.messages.response_event_error, order_map: [2, 3, 0, 1, 4], crc_extra: 77 },
         9000: { format: '<Q16dB', type: mavlink.messages.wheel_distance, order_map: [0, 2, 1], crc_extra: 113 },
         9005: { format: '<QfffffIh', type: mavlink.messages.winch_status, order_map: [0, 1, 2, 3, 4, 5, 7, 6], crc_extra: 117 },
-        12900: { format: '<BB20sBB20s', type: mavlink.messages.open_drone_id_basic_id, order_map: [0, 1, 2, 3, 4, 5], crc_extra: 114 },
-        12901: { format: '<iiffffHHhBB20sBBBBBBB', type: mavlink.messages.open_drone_id_location, order_map: [9, 10, 11, 12, 6, 7, 8, 0, 1, 2, 3, 13, 4, 14, 15, 16, 17, 5, 18], crc_extra: 254 },
-        12902: { format: '<IBB20sBBBB23s', type: mavlink.messages.open_drone_id_authentication, order_map: [1, 2, 3, 4, 5, 6, 7, 0, 8], crc_extra: 49 },
-        12903: { format: '<BB20sB23s', type: mavlink.messages.open_drone_id_self_id, order_map: [0, 1, 2, 3, 4], crc_extra: 249 },
-        12904: { format: '<iiffHHBB20sBBBB', type: mavlink.messages.open_drone_id_system, order_map: [6, 7, 8, 9, 10, 0, 1, 4, 5, 2, 3, 11, 12], crc_extra: 203 },
-        12905: { format: '<BB20sB20s', type: mavlink.messages.open_drone_id_operator_id, order_map: [0, 1, 2, 3, 4], crc_extra: 49 },
-        12915: { format: '<BBBB250s', type: mavlink.messages.open_drone_id_message_pack, order_map: [0, 1, 2, 3, 4], crc_extra: 62 },
+        12900: { format: '<BB20ABB20A', type: mavlink.messages.open_drone_id_basic_id, order_map: [0, 1, 2, 3, 4, 5], crc_extra: 114 },
+        12901: { format: '<iiffffHHhBB20ABBBBBBB', type: mavlink.messages.open_drone_id_location, order_map: [9, 10, 11, 12, 6, 7, 8, 0, 1, 2, 3, 13, 4, 14, 15, 16, 17, 5, 18], crc_extra: 254 },
+        12902: { format: '<IBB20ABBBB23A', type: mavlink.messages.open_drone_id_authentication, order_map: [1, 2, 3, 4, 5, 6, 7, 0, 8], crc_extra: 49 },
+        12903: { format: '<BB20AB23s', type: mavlink.messages.open_drone_id_self_id, order_map: [0, 1, 2, 3, 4], crc_extra: 249 },
+        12904: { format: '<iiffHHBB20ABBBB', type: mavlink.messages.open_drone_id_system, order_map: [6, 7, 8, 9, 10, 0, 1, 4, 5, 2, 3, 11, 12], crc_extra: 203 },
+        12905: { format: '<BB20AB20s', type: mavlink.messages.open_drone_id_operator_id, order_map: [0, 1, 2, 3, 4], crc_extra: 49 },
+        12915: { format: '<BBBB250A', type: mavlink.messages.open_drone_id_message_pack, order_map: [0, 1, 2, 3, 4], crc_extra: 62 },
         40100: { format: '<fiiiiB', type: mavlink.messages.crop_spraying_status, order_map: [5, 0, 1, 2, 3, 4], crc_extra: 49 },
-        40200: { format: '<HB250s', type: mavlink.messages.gps_device_info, order_map: [0, 1, 2], crc_extra: 234 },
+        40200: { format: '<HB250A', type: mavlink.messages.gps_device_info, order_map: [0, 1, 2], crc_extra: 234 },
         40300: { format: '<Q3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3fBB', type: mavlink.messages.hil_sensor_injection, order_map: [0, 21, 22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], crc_extra: 125 },
         0: { format: '<IBBBBB', type: mavlink.messages.heartbeat, order_map: [1, 2, 3, 0, 4, 5], crc_extra: 50 },
-        300: { format: '<HHH8s8s', type: mavlink.messages.protocol_version, order_map: [0, 1, 2, 3, 4], crc_extra: 217 },
+        300: { format: '<HHH8A8A', type: mavlink.messages.protocol_version, order_map: [0, 1, 2, 3, 4], crc_extra: 217 },
 }
 
 
