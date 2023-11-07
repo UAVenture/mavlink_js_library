@@ -81,7 +81,8 @@ MavlinkSystemBroker.prototype.handleMessage = function(msg) {
 
     // Create new systems on heartbeat messages
     if (msg.header.msgId == mavjs.mavlink.MAVLINK_MSG_ID_HEARTBEAT) {
-        if (self.systems[sysid] === undefined) {
+        // Only addd new autopilot systems
+        if (self.systems[sysid] === undefined && msg.autopilot != mavlink.MAV_AUTOPILOT_INVALID) {
             // create new system
             self.logger.info(`New system ${sysid}`);
 
