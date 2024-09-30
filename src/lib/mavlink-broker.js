@@ -52,6 +52,20 @@ MavlinkSystemBroker.prototype.getUniversalSystem = function() {
     return self.systems[0];
 }
 
+MavlinkSystemBroker.prototype.getSystem = function(sysid) {
+    let self = this;
+
+    if (self.systems[sysid] == undefined) {
+        // create new system
+        self.logger.info(`System created manually ${sysid}`);
+
+        // TODO: Create new mavlib per system so each system can receive data in a separate MAVLink version
+        self.systems[sysid] = new mavsys.MavlinkSystem(sysid, self.mavlib);
+    }
+
+    return self.systems[sysid];
+}
+
 MavlinkSystemBroker.prototype.getSystems = function() {
     let self = this;
 

@@ -13,8 +13,10 @@ const SUB_MODES = [
     "Mission",
     "RTL",
     "Land",
-    "RTGS",
-    "Follow"
+    "reserved",
+    "Follow",
+    "Precland",
+    "VTOL Takeoff"
 ]
 
 const BASE_MODES = [
@@ -25,7 +27,10 @@ const BASE_MODES = [
     "Auto",
     "Acro",
     "Offboard",
-    "Stabilised"
+    "Stabilised",
+    "Rattitude",
+    "reserved",
+    "Termination"
 ]
 
 var MavlinkSystem = function(sysId, mavlib) {
@@ -48,7 +53,9 @@ var MavlinkSystem = function(sysId, mavlib) {
             valid: false,
             lat: undefined,
             lon: undefined,
-            alt: undefined
+            alt: undefined,
+            relAlt: undefined,
+            numSats: 0
         },
         hud: {
             hdg: undefined,
@@ -59,12 +66,14 @@ var MavlinkSystem = function(sysId, mavlib) {
             landedState: "unknown",
             flightMode: "unknown",
             armedState: "unknown",
-            safetyState: "unknown"
+            safetyState: "unknown",
+            vtolState: "unknown"
         },
         comms: {
             connected: false,
             lastHeartbeat: 0
-        }
+        },
+        batteries: []
     };
 
     self.logFetcher = undefined;
@@ -115,7 +124,7 @@ MavlinkSystem.prototype.updateData = function(msg) {
 
     if (msg.header.msgId === lib.mavlink.MAVLINK_MSG_ID_EXTENDED_SYS_STATE) {
         if (msg.landed_state == lib.mavlink.MAV_LANDED_STATE_IN_AIR) {
-            self.info.hud.landedState = "On route";
+            self.info.hud.landedState = "Flying";
 
         } else if (msg.landed_state == lib.mavlink.MAV_LANDED_STATE_TAKEOFF) {
             self.info.hud.landedState = "Takeoff";
@@ -125,6 +134,22 @@ MavlinkSystem.prototype.updateData = function(msg) {
 
         } else {
             self.info.hud.landedState = "On ground";
+        }
+
+        if (msg.vtol_state == lib.mavlink.MAV_VTOL_STATE_TRANSITION_TO_FW) {
+            self.info.hud.vtolState = "Transition to FW";
+
+        } else if (msg.vtol_state == lib.mavlink.MAV_VTOL_STATE_TRANSITION_TO_MC) {
+            self.info.hud.vtolState = "Transition to MC";
+
+        } else if (msg.vtol_state == lib.mavlink.MAV_VTOL_STATE_MC) {
+            self.info.hud.vtolState = "Hover";
+
+        } else if (msg.vtol_state == lib.mavlink.MAV_VTOL_STATE_FW) {
+            self.info.hud.vtolState = "Fixed-wing";
+
+        } else {
+            self.info.hud.vtolState = "unknown";
         }
 
         if (self.lastLandedState != msg.landed_state) {
@@ -202,6 +227,7 @@ MavlinkSystem.prototype.updateData = function(msg) {
         self.info.position.lat = msg.lat / 1e7;
         self.info.position.lon = msg.lon / 1e7;
         self.info.position.alt = msg.alt / 1e3;
+        self.info.position.relAlt = msg.relative_alt / 1e3;
         self.info.hud.hdg = msg.hdg / 1e2;
         self.info.position.valid = true;
     }
@@ -215,6 +241,18 @@ MavlinkSystem.prototype.updateData = function(msg) {
         self.info.hud.roll = msg.roll * (180.0 / Math.PI);
         self.info.hud.pitch = msg.pitch * (180.0 / Math.PI);
         self.info.hud.hdg = msg.yaw * (180.0 / Math.PI);
+    }
+
+    if (msg.header.msgId === lib.mavlink.MAVLINK_MSG_ID_BATTERY_STATUS) {
+        self.info.batteries[msg.id] = {
+            current: msg.current_battery / 100,
+            voltage: msg.voltages[0] / 1000,
+            remaining: msg.battery_remaining
+        };
+    }
+
+    if (msg.header.msgId === lib.mavlink.MAVLINK_MSG_ID_GPS_RAW_INT) {
+        self.info.position.numSats = msg.satellites_visible;
     }
 
     if (statusChanged) {
