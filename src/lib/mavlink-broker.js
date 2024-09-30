@@ -1,6 +1,7 @@
 'use strict';
 var events = require("events");
 var util = require("util");
+var Long = require("long");
 
 var mavjs = require('./mavlink-lib.js');
 var mavsys = require('./mavlink-system.js');
@@ -14,6 +15,8 @@ var MavlinkSystemBroker = function(connection, srcId = 255, srcComp = 0, mavlink
     self.connection = connection;
 
     self.systems = [];
+
+    self.keepAliveInterval = undefined;
 
     self.mavlib = new mavjs.MavlinkLib(srcId, srcComp, (data) => {
         self.connection.send(data);
@@ -120,6 +123,31 @@ MavlinkSystemBroker.prototype.handleMessage = function(msg) {
         self.systems[0].updateData(msg);
     }
 
+}
+
+MavlinkSystemBroker.prototype.sendPing = function() {
+    const self = this;
+
+    let timeUsecLong = Long.fromNumber(Date.now(), true);
+
+    self.sendMessage(new mavjs.messages.ping(
+        [timeUsecLong.getLowBits(), timeUsecLong.getHighBits()],
+        0, 0, 0));
+}
+
+MavlinkSystemBroker.prototype.enableKeepAlive = function() {
+    const self = this;
+
+    if (self.keepAliveInterval) {
+        return;
+    }
+
+    self.keepAliveInterval = setInterval(() => {
+        self.sendPing();
+    }, 5000);
+
+    // send one out right away
+    self.sendPing();
 }
 
 module.exports.MavlinkSystemBroker = MavlinkSystemBroker;
